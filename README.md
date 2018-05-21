@@ -1,1 +1,3 @@
 # dot-files
+
+My configurations for tmux, Emacs, bash, ...
