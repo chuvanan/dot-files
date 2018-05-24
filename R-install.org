@@ -2,7 +2,7 @@
 
 This short note is a guide for Ubuntu/Mint users (me in the future) who want to
 install R programming language from source (because you want some [[https://rviews.rstudio.com/2018/03/21/multiple-versions-of-r/][customization
-/ optimization]] or simple due to Ubuntu repository are way too late to update
+/ optimization]] or simply due to Ubuntu repositories are way too late to update
 latest R binary release)
 
 - Install the build dependencies required for R
@@ -27,7 +27,7 @@ make
 sudo make install
 #+END_SRC
 
-- Make R's executable files searchable
+- Make R's executable files searchable by creating symbolic link in ~/bin~
 
 #+BEGIN_SRC bash
 sudo ln /opt/R/3.5.0/bin/R -s R
