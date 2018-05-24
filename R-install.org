@@ -39,3 +39,11 @@ sudo ln /opt/R/3.5.0/bin/Rscript -s Rscript
 #+BEGIN_SRC bash
 which R
 #+END_SRC
+
+
+*** References
+
+- https://www.miskatonic.org/2015/06/23/installing-r-from-source/
+- https://rviews.rstudio.com/2018/03/21/multiple-versions-of-r/
+- https://shiny.rstudio.com/articles/upgrade-R.html
+- https://support.rstudio.com/hc/en-us/articles/215488098-Installing-multiple-versions-of-R-on-Linux
