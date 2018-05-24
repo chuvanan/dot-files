@@ -1,0 +1,41 @@
+#+TITLE: Install R from source
+
+This short note is a guide for Ubuntu/Mint users (me in the future) who want to
+install R programming language from source (because you want some [[https://rviews.rstudio.com/2018/03/21/multiple-versions-of-r/][customization
+/ optimization]] or simple due to Ubuntu repository are way too late to update
+latest R binary release)
+
+- Install the build dependencies required for R
+
+#+BEGIN_SRC bash
+sudo apt build-dep r-base
+#+END_SRC
+
+- Download and extract source code
+
+#+BEGIN_SRC bash
+wget https://cran.r-project.org/src/base/R-3/R-3.5.0.tar.gz
+tar -xzvf R-3.5.0.tar.gz
+cd R-3.5.0
+#+END_SRC
+
+- Configuring and building R
+
+#+BEGIN_SRC bash
+./configure --prefix=/opt/R/3.5.0 --enable-R-shlib --with-blas --with-lapack
+make
+sudo make install
+#+END_SRC
+
+- Make R's executable files searchable
+
+#+BEGIN_SRC bash
+sudo ln /opt/R/3.5.0/bin/R -s R
+sudo ln /opt/R/3.5.0/bin/Rscript -s Rscript
+#+END_SRC
+
+- Check
+
+#+BEGIN_SRC bash
+which R
+#+END_SRC
