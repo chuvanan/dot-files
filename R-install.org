@@ -19,7 +19,7 @@ tar -xzvf R-3.5.0.tar.gz
 cd R-3.5.0
 #+END_SRC
 
-- Configuring and building R
+- Configure and build R
 
 #+BEGIN_SRC bash
 ./configure --prefix=/opt/R/3.5.0 --enable-R-shlib --with-blas --with-lapack
