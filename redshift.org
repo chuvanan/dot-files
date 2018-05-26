@@ -1,0 +1,35 @@
+#+TITLE: redshift config
+
+
+*** What is Redshift?
+
+From the author's words:
+
+#+BEGIN_QUOTE
+edshift adjusts the color temperature of your screen according to your
+surroundings. This may help your eyes hurt less if you are working in front of
+the screen at night.
+#+END_QUOTE
+
+*** Redshift installation and configuration
+
+- Install Redshift:
+
+#+BEGIN_SRC bash
+sudo apt install redshift
+# or GUI version
+sudo apt install redshift-gtk
+#+END_SRC
+
+- Configuration file ~redshift.conf~ can be placed in ~/.config/~:
+
+#+BEGIN_SRC conf
+[redshift]
+temp-night=5400
+adjustment-method=randr
+location-provider=manual
+
+[manual]
+lat=21.04
+lon=105.81
+#+END_SRC
