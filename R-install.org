@@ -22,7 +22,7 @@ cd R-3.5.0
 - Configure and build R
 
 #+BEGIN_SRC bash
-./configure --prefix=/opt/R/3.5.0 --enable-R-shlib --with-blas --with-lapack
+./configure --prefix=/opt/R/3.5.0 --enable-R-shlib --with-blas --with-lapack --with-cairo --with-libtiff --enable-memory-profiling
 make
 sudo make install
 #+END_SRC
@@ -47,3 +47,15 @@ which R
 - https://rviews.rstudio.com/2018/03/21/multiple-versions-of-r/
 - https://shiny.rstudio.com/articles/upgrade-R.html
 - https://support.rstudio.com/hc/en-us/articles/215488098-Installing-multiple-versions-of-R-on-Linux
+
+*** Possible issues
+
+- R-3.5.0 failed to enable cairo graphics. This ~capabilities("cairo")~ should
+  return TRUE (as configured above). Make cairo as default graphic engine by
+  putting the following lines of code into ~.Rprofile~
+
+#+BEGIN_SRC r
+setHook(packageEvent("grDevices", "onLoad"),
+        function(...) grDevices::X11.options(type = 'cairo'))
+options(device = 'x11')
+#+END_SRC
