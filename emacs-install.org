@@ -1,0 +1,24 @@
+#+TITLE: Install Emacs from source
+
+This guide is meant for users of Unix and Unix-like systems.
+
+- First download the Emacs sources from this [[http://mirror.freedif.org/GNU/emacs/][repo]]
+
+#+BEGIN_SRC bash
+wget http://mirror.freedif.org/GNU/emacs/emacs-26.1.tar.gz
+#+END_SRC
+
+- Next uncompress and extract the source files
+
+#+BEGIN_SRC bash
+tar -zxvf emacs-26.1.tar.gz
+cd emacs-26.1
+#+END_SRC
+
+- Then configure and compile sources
+
+#+BEGIN_SRC bash
+./configure         # check and set up prerequisites
+make                # build components
+sudo make install   # install files
+#+END_SRC
