@@ -29,3 +29,13 @@ sudo make install   # install files
 - https://www.emacswiki.org/emacs/BuildingEmacs
 - https://www.topbug.net/blog/2016/11/10/installing-emacs-from-source-avoid-the-conflict-of-ctags/
 - http://ergoemacs.org/emacs/building_emacs_on_linux.html
+
+*** Possible issues
+
+- ~gnutls~ is missing
+
+#+BEGIN_SRC bash
+sudo apt install libgnutls28-dev
+#+END_SRC
+
+- X toolkit could not be [[https://askubuntu.com/questions/213873/what-library-i-need-to-install-if-i-want-to-compile-emacs][found]]
