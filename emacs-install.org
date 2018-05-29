@@ -22,3 +22,10 @@ cd emacs-26.1
 make                # build components
 sudo make install   # install files
 #+END_SRC
+
+*** References
+
+- https://www.gnu.org/software/emacs/manual/html_node/efaq/Installing-Emacs.html
+- https://www.emacswiki.org/emacs/BuildingEmacs
+- https://www.topbug.net/blog/2016/11/10/installing-emacs-from-source-avoid-the-conflict-of-ctags/
+- http://ergoemacs.org/emacs/building_emacs_on_linux.html
