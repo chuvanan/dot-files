@@ -33,3 +33,10 @@ location-provider=manual
 lat=21.04
 lon=105.81
 #+END_SRC
+
+
+
+*** References
+
+- http://jonls.dk/redshift/ Author's homepage
+- https://github.com/jonls/redshift Github repo
