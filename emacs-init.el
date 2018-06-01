@@ -17,8 +17,8 @@
         ("gnu" . 10)
         ("melpa" . 0)))
 
-(add-to-list 'load-path "/home/anchu/.emacs.d/ess-17.11")
-(load "ess-site")
+;; (add-to-list 'load-path "/home/anchu/.emacs.d/ess-17.11")
+;; (load "ess-site")
 
 (add-to-list 'load-path "/home/anchu/.emacs.d/writegood-mode")
 (load "writegood-mode")
@@ -380,6 +380,7 @@
   :config
   (add-hook 'ess-mode-hook #'aggressive-indent-mode)
   (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode))
+(global-aggressive-indent-mode 1)
 
 ;; turn off auto revert messages
 (setq auto-revert-verbose nil)
@@ -399,6 +400,9 @@
 (define-key ess-mode-map (kbd "<C-return>") 'ess-eval-region-or-function-or-paragraph-and-step)
 (define-key ess-mode-map (kbd "<C-S-return>") 'ess-eval-buffer)
 (define-key ess-mode-map (kbd "C-M-;") 'comment-line)
+(define-key ess-mode-map (kbd "C-S-<f10>") 'inferior-ess-reload)
+(define-key inferior-ess-mode-map (kbd "C-S-<f10>") 'inferior-ess-reload)
+
 
 ;; company backend
 (setq-local company-backends
@@ -424,6 +428,7 @@
   (add-to-list 'auto-mode-alist '("\\.Rcpp$" . poly-r+c++-mode))
   (add-to-list 'auto-mode-alist '("\\.cppR$" . poly-c++r-mode))
   )
+(define-key polymode-mode-map (kbd "C-S-<f10>") 'inferior-ess-reload)
 
 ;; chain operator
 (defun then_R_operator ()
@@ -575,7 +580,7 @@
  '(org-agenda-files (quote ("/home/anchu/ownCloud/org-mode/rta-tasks.org")))
  '(package-selected-packages
    (quote
-    (elfeed-web elfeed counsel-projectile dashboard slime all-the-icons-ivy all-the-icons python-mode flx org-bullets counsel undo-tree dired-subtree ivy smooth-scrolling iedit elisp-slime-nav autopair ess-view multiple-cursors leuven-theme linum-relative highlight-symbol eyebrowse neotree swiper-helm dumb-jump paredit-everywhere electric-operator htmlize py-autopep8 gnuplot-mode elpy leuven yaml-mode sml-mode helm-swoop helm-ag helm-projectile color-theme-sanityinc-tomorrow flycheck goto-last-change polymode stripe-buffer helm-descbinds ibuffer-vc ido-vertical-mode smart-mode-line-powerline smart-mode-line-powerline-theme rainbow-delimiters tldr anzu hungry-delete swiper r-autoyas beacon ag ido-ubiquitous ace-window keyfreq apropospriate-theme icicles visible-mark company-jedi avy imenu-anywhere aggressive-indent zenburn-theme projectile powerline meaculpa-theme smart-mode-line csv-mode helm-R helm which-key smex window-numbering company easy-kill use-package magit expand-region markdown-mode auto-complete smartparens org)))
+    (auto-indent-mode elfeed-web elfeed counsel-projectile dashboard slime all-the-icons-ivy all-the-icons python-mode flx org-bullets counsel undo-tree dired-subtree ivy smooth-scrolling iedit elisp-slime-nav autopair ess-view multiple-cursors leuven-theme linum-relative highlight-symbol eyebrowse neotree swiper-helm dumb-jump paredit-everywhere electric-operator htmlize py-autopep8 gnuplot-mode elpy leuven yaml-mode sml-mode helm-swoop helm-ag helm-projectile color-theme-sanityinc-tomorrow flycheck goto-last-change polymode stripe-buffer helm-descbinds ibuffer-vc ido-vertical-mode smart-mode-line-powerline smart-mode-line-powerline-theme rainbow-delimiters tldr anzu hungry-delete swiper r-autoyas beacon ag ido-ubiquitous ace-window keyfreq apropospriate-theme icicles visible-mark company-jedi avy imenu-anywhere aggressive-indent zenburn-theme projectile powerline meaculpa-theme smart-mode-line csv-mode helm-R helm which-key smex window-numbering company easy-kill use-package magit expand-region markdown-mode auto-complete smartparens org)))
  '(send-mail-function (quote mailclient-send-it))
  '(show-paren-mode t)
  '(size-indication-mode t)
@@ -747,7 +752,7 @@ This is useful when followed by an immediate kill."
 
 ;;;; Tidy up the mode-line.  I don't need to see everything in there.
 (require 'diminish)
-(eval-after-load "aggressive-indent" '(diminish 'aggressive-indent-mode))
+;; (eval-after-load "aggressive-indent" '(diminish 'aggressive-indent-mode))
 (eval-after-load "anzu"              '(diminish 'anzu-mode))
 (eval-after-load "auto-complete"     '(diminish 'auto-complete-mode))
 (eval-after-load "smartparens"       '(diminish 'smartparens-mode))
@@ -785,12 +790,12 @@ This is useful when followed by an immediate kill."
 
 (add-hook 'post-command-hook 'anchu/set-cursor)
 
-
+(setq confirm-kill-processes nil)
 ;; kill as exit
-(defadvice save-buffers-kill-emacs
-    (around no-query-kill-emacs activate)
-  "Prevent \"Active processes exist\" query on exit."
-  (cl-flet ((process-list ())) ad-do-it))
+;; (defadvice save-buffers-kill-emacs
+;;     (around no-query-kill-emacs activate)
+;;   "Prevent \"Active processes exist\" query on exit."
+;;   (cl-flet ((process-list ())) ad-do-it))
 
 
 (defun find-user-init-file ()
