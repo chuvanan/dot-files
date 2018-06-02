@@ -512,6 +512,7 @@
   :defer t
   :init
   (require 'ess-site)
+  (require 'ess-rutils)
   ;; Auto set width and length options when initiate new Ess processes
   :config
   (add-hook 'ess-post-run-hook 'ess-execute-screen-options)
@@ -530,8 +531,16 @@
   (setq ess-use-company nil)
   (setq inferior-R-args "--no-restore-history --no-save")
   (setq ess-offset-arguments 'prev-line)
-  (setq ess-toggle-underscore nil)
+
+  ;; fix assignment key
   (setq ess-S-assign-key (kbd "M--"))
+  (ess-toggle-S-assign-key t) ; enable above key definition
+  ;; leave my underscore key alone!
+  (ess-toggle-S-assign nil)
+  (ess-toggle-S-assign nil)
+  (ess-toggle-underscore nil)
+  (ess-disable-smart-S-assign nil)
+
   (setq ess-use-eldoc 'script-only)
   (setq ess-eldoc-show-on-symbol nil)
   (setq ess-eldoc-abbreviation-style t)
