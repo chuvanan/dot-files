@@ -36,11 +36,13 @@
 ;; Install and configure use-package
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
+
+(eval-when-compile
+  (require 'use-package))
 (setq use-package-verbose t)
 (setq use-package-always-ensure t)
-(require 'use-package)
-
 (use-package diminish)                  ; to enable :diminish
+(use-package bind-key)                  ; to enable :bind
 (setq load-prefer-newer t)              ; always load newest byte code
 
 ;; -----------------------------------------------------------------------------
