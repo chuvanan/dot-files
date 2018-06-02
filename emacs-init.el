@@ -251,23 +251,6 @@
 (use-package yasnippet
   :diminish yas-minor-mode
   :init
-  ;; It will test whether it can expand, if yes, cursor color -> green.
-  (defun yasnippet-can-fire-p (&optional field)
-    (interactive)
-    (setq yas--condition-cache-timestamp (current-time))
-    (let (templates-and-pos)
-      (unless (and yas-expand-only-for-last-commands
-		   (not (member last-command yas-expand-only-for-last-commands)))
-	(setq templates-and-pos (if field
-				    (save-restriction
-				      (narrow-to-region (yas--field-start field)
-							(yas--field-end field))
-				      (yas--templates-for-key-at-point))
-				  (yas--templates-for-key-at-point))))
-
-      (set-cursor-color (if (and templates-and-pos (first templates-and-pos))
-			    "#d65d0e" (face-attribute 'default :foreground)))))
-  (add-hook 'post-command-hook 'yasnippet-can-fire-p)
   :config
   (yas-reload-all)
   (add-hook 'ess-mode-hook #'yas-minor-mode)
@@ -1130,7 +1113,6 @@ sequentially."
 
 (add-hook 'ess-mode-hook 'ligatures-hasklig-code-setup)
 (add-hook 'inferior-ess-mode-hook 'ligatures-hasklig-code-setup)
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
