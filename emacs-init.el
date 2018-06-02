@@ -1130,3 +1130,18 @@ sequentially."
 
 (add-hook 'ess-mode-hook 'ligatures-hasklig-code-setup)
 (add-hook 'inferior-ess-mode-hook 'ligatures-hasklig-code-setup)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (dired+ ob crux dired uniquify zenburn-theme yaml-mode window-numbering which-key wgrep-ag use-package undo-tree solarized-theme smooth-scrolling smartparens rainbow-delimiters python-mode python powerline polymode paradox org-bullets nord-theme neotree multiple-cursors markdown-mode magit ledger-mode jedi ivy-historian inlineR imenu-anywhere iedit ibuffer-vc ibuffer-projectile hungry-delete helm-projectile gruvbox-theme goto-last-change fullframe expand-region eval-in-repl ess elpy electric-operator e2wm-R dumb-jump dired-subtree diminish dashboard counsel-projectile company-ycmd company-jedi color-theme-sanityinc-tomorrow anzu all-the-icons-ivy all-the-icons-dired aggressive-indent ag))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
