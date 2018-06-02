@@ -770,14 +770,7 @@
 (use-package python
   :mode ("\\.py\\'" . python-mode)
   :config
-  (setq python-shell-interpreter "python3")
-  ;; (setq python-shell-interpreter-args "--pprint --colors=Linux")
-  (add-hook 'python-mode-hook
-            (lambda ()
-              ;; conflicts with `eldoc-mode'
-              (semantic-idle-summary-mode -1)
-              (setq mode-name "Py")))
-  )
+  (setq python-shell-interpreter "python3"))
 
 (use-package elpy
   :after python
