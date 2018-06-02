@@ -843,37 +843,42 @@
 ;; Ivy
 ;; -----------------------------------------------------------------------------
 
-(ivy-mode 1)
-(setq ivy-use-virtual-buffers t)
-(setq enable-recursive-minibuffers t)
-(global-set-key "\C-s" 'swiper)
-(global-set-key (kbd "C-x C-f") 'counsel-find-file)
-(global-set-key (kbd "C-c C-r") 'ivy-resume)
-(global-set-key (kbd "<f6>") 'ivy-resume)
-(global-set-key (kbd "M-x") 'counsel-M-x)
-(global-set-key (kbd "<f1> f") 'counsel-describe-function)
-(global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-(global-set-key (kbd "<f1> l") 'counsel-find-library)
-(global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-(global-set-key (kbd "<f2> u") 'counsel-unicode-char)
-(global-set-key (kbd "C-c k") 'counsel-ag)
-(global-set-key (kbd "C-c g") 'counsel-grep)
-(global-set-key (kbd "C-c j") 'counsel-git-grep)
-(global-set-key (kbd "C-x C-b") 'ivy-switch-buffer)
-(global-set-key (kbd "C-c C-o") 'ivy-occur)
-(global-set-key (kbd "C-c C-w") 'ivy-wgrep-change-to-wgrep-mode)
-(global-set-key (kbd "M-y") 'counsel-yank-pop)
-(global-set-key (kbd "C-h a") 'counsel-apropos)
-(global-set-key (kbd "C-h b") 'counsel-descbinds)
-(define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
-(define-key read-expression-map (kbd "C-r") 'counsel-minibuffer-history)
-(global-set-key (kbd "C-x C-r") 'counsel-recentf)
-(global-set-key (kbd "C-c v") 'ivy-push-view)
-(global-set-key (kbd "C-c V") 'ivy-pop-view)
+(use-package ivy
+  :diminish ivy-mode
+  :config
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t)
+  (setq enable-recursive-minibuffers t)
+  (setq ivy-initial-inputs-alist nil)
+  (setq ivy-count-format "%d/%d ")
+  (setq ivy-re-builders-alist
+        '((counsel-M-x . ivy--regex-fuzzy)
+          (t . ivy--regex-plus)))
+  :bind* (("C-s" . swiper)
+          ("C-c C-r" . ivy-resume)
+          ("<f6>" . ivy-resume)
+          ("C-x C-b" . ivy-switch-buffer)
+          ("C-x C-o" . ivy-occur)
+          ("C-c C-w" . ivy-wgrep-change-to-wgrep-mode)
+          ("C-c v" . ivy-push-view)
+          ("C-c V" . ivy-pop-view)))
 
-(setq ivy-re-builders-alist
-      '((counsel-M-x . ivy--regex-fuzzy)
-        (t . ivy--regex-plus)))
+(use-package counsel
+  :bind*
+  (("C-x C-f" . counsel-find-file)
+   ("C-c C-r" . counsel-recentf)
+   ("<f1> f" . counsel-describe-function)
+   ("<f1> v" . counsel-describe-variable)
+   ("<f1> l" . counsel-find-library)
+   ("<f2> i" . counsel-info-lookup-symbol)
+   ("<f2> u" . counsel-unicode-char)
+   ("C-c k" . counsel-ag)
+   ("C-c g" . counsel-grep)
+   ("C-c j" . counsel-git-grep)
+   ("M-y" . counsel-yank-pop)
+   ("C-h a" . counsel-apropos)
+   ("C-h b" . counsel-descbinds)
+   ("M-x" . counsel-M-x)))
 
 (defun counsel-goto-recent-directory ()
   "Open recent directory with dired"
