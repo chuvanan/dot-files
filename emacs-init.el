@@ -402,7 +402,6 @@
 ;; https://github.com/bbatsov/crux
 (use-package crux
   :bind (("C-a" . crux-move-beginning-of-line)
-         ("C-k" . crux-smart-kill-line)
          ("C-c I" . crux-find-user-init-file)))
 
 ;; https://github.com/bbatsov/projectile
@@ -936,20 +935,20 @@
   :config
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
-(use-package ob
-  :after org
-  :config
-  ;; Active Babel languages:
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((R . t)
-     (latex . t)
-     (emacs-lisp . t)
-     (gnuplot . t)
-     (plantuml . t)))
-  (setq org-src-tab-acts-natively t
-        org-src-fontify-natively t
-        org-confirm-babel-evaluate nil))
+;; (use-package ob
+;;   :after org
+;;   :config
+;;   ;; Active Babel languages:
+;;   (org-babel-do-load-languages
+;;    'org-babel-load-languages
+;;    '((R . t)
+;;      (latex . t)
+;;      (emacs-lisp . t)
+;;      (gnuplot . t)
+;;      (plantuml . t)))
+;;   (setq org-src-tab-acts-natively t
+;;         org-src-fontify-natively t
+;;         org-confirm-babel-evaluate nil))
 
 ;; -----------------------------------------------------------------------------
 ;; Custom functions
