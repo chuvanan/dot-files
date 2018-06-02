@@ -63,6 +63,10 @@
 (unbind-key "C-x C-z")                  ; suspend-frame
 (unbind-key "C-x m")			; compose-mail
 
+;; Font for source code
+(when (member "Hasklig" (font-family-list))
+  (set-frame-font "Hasklig 10" nil t))
+
 ;; Space is expensive. So remove unnecessary GUI element
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -83,6 +87,7 @@
       hscroll-margin 3
       scroll-conservatively  10000)
 
+(set-face-attribute 'vertical-border nil :foreground (face-attribute 'fringe :background))
 (set-fringe-mode '(4 . 0))
 (put 'narrow-to-region 'disabled nil)
 
