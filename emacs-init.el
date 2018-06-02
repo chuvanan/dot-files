@@ -9,6 +9,10 @@
 (package-initialize)
 (setq package-enable-at-startup nil)    ; to prevent accidentally loading packages twice
 
+(let ((minver "26.1"))
+  (when (version< emacs-version minver)
+    (error "This config requires Emacs v%s or higher" minver)))
+
 ;; Add package sources
 (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/") t)
