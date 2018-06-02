@@ -39,3 +39,11 @@ sudo apt install libgnutls28-dev
 #+END_SRC
 
 - X toolkit could not be [[https://askubuntu.com/questions/213873/what-library-i-need-to-install-if-i-want-to-compile-emacs][found]]
+
+- Install dependencies (if required)
+
+#+BEGIN_SRC bash
+sudo apt install libgnutls28-dev
+sudo apt install libtiff-dev
+sudo apt install libgif-dev
+#+END_SRC
