@@ -340,14 +340,14 @@
   :init (setq markdown-command "multimarkdown"))
 
 ;; https://www.emacswiki.org/emacs/uniquify
-(use-package uniquify
-  :config
-  (setq uniquify-buffer-name-style 'forward)
-  (setq uniquify-separator "/")
-  ;; rename after killing uniquified
-  (setq uniquify-after-kill-buffer-p t)
-  ;; don't muck with special buffers
-  (setq uniquify-ignore-buffers-re "^\\*"))
+;; (use-package uniquify
+;;   :config
+;;   (setq uniquify-buffer-name-style 'forward)
+;;   (setq uniquify-separator "/")
+;;   ;; rename after killing uniquified
+;;   (setq uniquify-after-kill-buffer-p t)
+;;   ;; don't muck with special buffers
+;;   (setq uniquify-ignore-buffers-re "^\\*"))
 
 ;; https://github.com/abo-abo/avy
 (use-package avy
@@ -366,12 +366,10 @@
         recentf-auto-cleanup 'never)
   (recentf-mode +1))
 
-(use-package dired
-  :init
-  (require 'dired-x)
-  :config
-  (setq dired-listing-switches "-alh")
-  (add-hook 'dired-mode-hook 'auto-revert-mode))
+;; (use-package dired+
+;;   :config
+;;   (setq dired-listing-switches "-alh")
+;;   (add-hook 'dired-mode-hook 'auto-revert-mode))
 
 (use-package dired-subtree
   :config
