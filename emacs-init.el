@@ -908,6 +908,17 @@
   (setq org-startup-with-inline-images t)
   (setq org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
   (setq org-blank-before-new-entry (quote ((heading) (plain-list-item))))
+  ;; org-babel
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((R . t)
+     (latex . t)
+     (emacs-lisp . t)
+     (gnuplot . t)
+     (plantuml . t)))
+  (setq org-src-tab-acts-natively t
+        org-src-fontify-natively t
+        org-confirm-babel-evaluate nil)
   :bind (("\C-cl" . org-store-link)
          ("\C-ca" . org-agenda)
          ("\C-cc" . org-capture)
@@ -917,21 +928,6 @@
   :after org
   :config
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-
-;; (use-package ob
-;;   :after org
-;;   :config
-;;   ;; Active Babel languages:
-;;   (org-babel-do-load-languages
-;;    'org-babel-load-languages
-;;    '((R . t)
-;;      (latex . t)
-;;      (emacs-lisp . t)
-;;      (gnuplot . t)
-;;      (plantuml . t)))
-;;   (setq org-src-tab-acts-natively t
-;;         org-src-fontify-natively t
-;;         org-confirm-babel-evaluate nil))
 
 ;; -----------------------------------------------------------------------------
 ;; Custom functions
