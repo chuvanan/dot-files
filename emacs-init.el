@@ -352,6 +352,7 @@
   (recentf-mode +1))
 
 ;; (use-package dired+
+;;   :load-path "~/.emacs.d/elpa/dired+"
 ;;   :config
 ;;   (setq dired-listing-switches "-alh")
 ;;   (add-hook 'dired-mode-hook 'auto-revert-mode))
@@ -534,7 +535,10 @@
               ("C-c C-w C-w" . ess-r-package-use-dir)
               ("<C-return>" . ess-eval-region-or-function-or-paragraph-and-step)
               ("<C-S-return>" . ess-eval-buffer)
-              ("C-M-;" . comment-line)))
+              ("C-M-;" . comment-line)
+              ("C-S-<f10>" . inferior-ess-reload))
+  :bind (:map inferior-ess-mode-map
+              ("C-S-<f10>" . inferior-ess-reload)))
 
 ;; syntax highlight
 (setq ess-R-font-lock-keywords
