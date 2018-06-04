@@ -866,7 +866,6 @@
         '((counsel-M-x . ivy--regex-fuzzy)
           (t . ivy--regex-plus)))
   :bind* (("C-s" . swiper)
-          ("C-c C-r" . ivy-resume)
           ("<f6>" . ivy-resume)
           ("C-x C-b" . ivy-switch-buffer)
           ("C-x C-o" . ivy-occur)
