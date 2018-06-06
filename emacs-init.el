@@ -286,7 +286,7 @@
   (add-to-list 'auto-mode-alist '("\\.Rmd$" . poly-markdown+r-mode))
   (add-to-list 'auto-mode-alist '("\\.Rcpp$" . poly-r+c++-mode))
   (add-to-list 'auto-mode-alist '("\\.cppR$" . poly-c++r-mode))
-  :bind ("M-p" . fill-paragraph))
+  (define-key polymode-mode-map "\M-p" 'fill-paragraph))
 
 ;; built-in package
 (use-package savehist
@@ -323,18 +323,20 @@
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
-  :init (setq markdown-command "multimarkdown"))
+  :init (setq markdown-command "multimarkdown")
+  :config
+  (define-key markdown-mode-map "\M-p" 'fill-paragraph))
 
 ;; https://www.emacswiki.org/emacs/uniquify
-(use-package uniquify
-  :defer 1
-  :config
-  (setq uniquify-buffer-name-style 'forward)
-  (setq uniquify-separator "/")
-  ;; rename after killing uniquified
-  (setq uniquify-after-kill-buffer-p t)
-  ;; don't muck with special buffers
-  (setq uniquify-ignore-buffers-re "^\\*"))
+;; (use-package uniquify
+;;   :defer 1
+;;   :config
+;;   (setq uniquify-buffer-name-style 'forward)
+;;   (setq uniquify-separator "/")
+;;   ;; rename after killing uniquified
+;;   (setq uniquify-after-kill-buffer-p t)
+;;   ;; don't muck with special buffers
+;;   (setq uniquify-ignore-buffers-re "^\\*"))
 
 ;; https://github.com/abo-abo/avy
 (use-package avy
