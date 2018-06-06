@@ -400,7 +400,8 @@
   :config
   (projectile-mode +1)
   (setq projectile-completion-system 'ivy)
-  (setq projectile-enable-caching t))
+  (setq projectile-enable-caching t)
+  :bind (("<f11>" . projectile-vc)))
 
 ;; https://github.com/aspiers/smooth-scrolling/
 (use-package smooth-scrolling
