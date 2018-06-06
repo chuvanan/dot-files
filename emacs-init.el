@@ -888,7 +888,9 @@
    ("M-y" . counsel-yank-pop)
    ("C-h a" . counsel-apropos)
    ("C-h b" . counsel-descbinds)
-   ("M-x" . counsel-M-x)))
+   ("M-x" . counsel-M-x)
+   ("C-x r b" . counsel-bookmark)
+   ))
 
 (defun counsel-goto-recent-directory ()
   "Open recent directory with dired"
