@@ -256,10 +256,10 @@
   :config
   (yas-reload-all)
   (add-hook 'ess-mode-hook #'yas-minor-mode)
-  :bind (:map yas-minor-mode-map
-              ("<tab>" . nil)
-              ("TAB" . nil)
-              ("<backtab>" . yas-expand)))
+  (setq yas-snippet-dirs (format "%s%s" user-emacs-directory "snippets"))
+  (define-key yas-minor-mode-map (kbd "<tab>") nil)
+  (define-key yas-minor-mode-map (kbd "TAB") nil)
+  (define-key yas-minor-mode-map (kbd "<backtab>") 'yas-expand))
 
 (use-package saveplace
   :defer 1
