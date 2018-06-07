@@ -878,12 +878,14 @@
   :bind* (("C-s" . swiper)
           ("<f6>" . ivy-resume)
           ("C-x C-b" . ivy-switch-buffer)
-          ("C-x C-o" . ivy-occur)
           ("C-c C-w" . ivy-wgrep-change-to-wgrep-mode)
           ("C-c v" . ivy-push-view)
           ("C-c V" . ivy-pop-view)))
 
 (use-package counsel
+  :config
+  (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
+  (define-key read-expression-map (kbd "C-r") 'counsel-minibuffer-history)
   :bind*
   (("C-x C-f" . counsel-find-file)
    ("C-c C-r" . counsel-recentf)
