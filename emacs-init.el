@@ -338,6 +338,13 @@
 ;;   ;; don't muck with special buffers
 ;;   (setq uniquify-ignore-buffers-re "^\\*"))
 
+;; Don't know why use-package failed to load uniquify
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'forward)
+(setq uniquify-separator "/")
+(setq uniquify-after-kill-buffer-p t)
+(setq uniquify-ignore-buffers-re "^\\*")
+
 ;; https://github.com/abo-abo/avy
 (use-package avy
   :bind (("M-s M-s" . avy-goto-word-or-subword-1)))
