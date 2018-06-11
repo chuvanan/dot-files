@@ -494,7 +494,9 @@
   (add-to-list 'company-dabbrev-code-modes 'ess-mode)
   :bind (:map company-active-map
               ([tab] . company-complete-common-or-cycle)
-              ("TAB" . company-complete-common-or-cycle)))
+              ("TAB" . company-complete-common-or-cycle)
+              ("C-n" . company-select-next)
+              ("C-p" . company-select-previous)))
 
 ;; https://github.com/milkypostman/powerline
 (use-package powerline
