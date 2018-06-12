@@ -219,9 +219,58 @@
 ;; vc-diff shortcut
 (global-set-key (kbd "<f10>") 'vc-diff)
 
+;; Config for SQLi
+(add-hook 'sql-interactive-mode-hook
+          (lambda ()
+            (toggle-truncate-lines t)))
+(add-hook 'sql-mode-hook 'sqlup-mode)
+;; (add-hook 'sql-interactive-mode-hook 'sqlup-mode)
+(add-hook 'redis-mode-hook 'sqlup-mode)
+(global-set-key (kbd "C-c u") 'sqlup-capitalize-keywords-in-region)
+
+(add-hook 'sql-mode-hook
+          (lambda ()
+            (setq comment-start "/* ")
+            (setq comment-end " */")))
+
+;; https://www.emacswiki.org/emacs/SqlQueryBuffer
+(defun my-sql-query-buffer (arg)
+  "Open a `sql-mode' buffer which interacts with the current SQLi buffer.
+ Switches to an existing buffer if possible, otherwise creates a new buffer.
+ With C-u prefix arg, always creates a new buffer."
+  (interactive "P")
+  (let ((sqlibuf (current-buffer)))
+    (if (null (sql-buffer-live-p sqlibuf))
+        (error "Buffer %s is not a working SQLi buffer" sqlibuf)
+      (let ((product sql-product)
+            (querybuf
+             (or (and (not (consp arg)) ;; prefix arg
+                      (boundp 'my-sql-query-buffer)
+                      (buffer-live-p (get-buffer my-sql-query-buffer))
+                      (get-buffer my-sql-query-buffer))
+                 (generate-new-buffer
+                  (format "*SQL ctl: %s*" (buffer-name sqlibuf))))))
+        (setq-local my-sql-query-buffer querybuf)
+        (pop-to-buffer querybuf '(display-buffer-reuse-window
+                                  . ((reusable-frames . visible))))
+        (unless (eq major-mode 'sql-mode)
+          (sql-mode)
+          (setq sql-product product)
+          (sql-highlight-product)
+          (setq sql-buffer sqlibuf)
+          (run-hooks 'sql-set-sqli-hook))))))
+
+(eval-after-load "sql"
+  '(define-key sql-interactive-mode-map (kbd "C-c q") 'my-sql-query-buffer))
+
 ;; -----------------------------------------------------------------------------
-;;
+;; use-package packages
 ;; -----------------------------------------------------------------------------
+
+;; https://github.com/purcell/exec-path-from-shell
+(use-package exec-path-from-shell
+  :config
+  (exec-path-from-shell-initialize))
 
 ;; https://github.com/magit/magit
 (use-package magit
