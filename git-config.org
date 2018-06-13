@@ -4,6 +4,9 @@
 git config user.name "An Chu"
 git config user.email "chuvanan.cva@gmail.com"
 
+# editor
+git config --global core.editor "emacs"
+
 # alias
 git config --global alias.co checkout
 git config --global alias.br branch
@@ -12,3 +15,12 @@ git config --global alias.st status
 git config --global alias.unstage 'reset HEAD --'
 git config --global alias.last 'log -1 HEAD'
 #+END_SRC
+
+
+*** References
+
+- https://github.com/gitalias/gitalias
+- https://www.atlassian.com/blog/git/advanced-git-aliases
+- https://coderwall.com/p/euwpig/a-better-git-log
+- https://git-scm.com/book/en/v2/Git-Basics-Git-Aliases
+- http://durdn.com/blog/2012/11/22/must-have-git-aliases-advanced-examples/
