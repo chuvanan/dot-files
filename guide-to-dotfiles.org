@@ -1,0 +1,31 @@
+
+
+I've never been serious about managing dot files until the day I got three
+computers, one at work, and the other two at home. The burden of maintaining all
+configuration files up-to-date and consistent in all machines was ruining my
+productivity. I spend more time on 'configuring' things rather than doing the
+real work.
+
+** References
+
+
+Other people wrote about managing dot files:
+- https://dotfiles.github.io/
+- https://alexpearce.me/2016/02/managing-dotfiles-with-stow/
+- https://linuxconfig.org/how-to-use-gnu-stow-to-manage-programs-installed-from-source-and-dotfiles
+- http://brandon.invergo.net/news/2012-05-26-using-gnu-stow-to-manage-your-dotfiles.html
+- https://www.linux.com/news/get-rid-stowaway-packages-gnu-stow
+- https://news.ycombinator.com/item?id=11070797 Ask HN.
+- https://developer.atlassian.com/blog/2016/02/best-way-to-store-dotfiles-git-bare-repo/
+- https://www.anishathalye.com/2014/08/03/managing-your-dotfiles/
+- https://sanctum.geek.nz/arabesque/managing-dot-files-with-git/
+- https://zachholman.com/2010/08/dotfiles-are-meant-to-be-forked/
+- https://orrsella.com/2016/10/29/managing-local-and-remote-dot-files/
+
+Tools for dot managing:
+- https://github.com/thoughtbot/rcm
+- https://github.com/technicalpickles/homesick
+- https://github.com/anishathalye/dotbot
+
+Cool examples:
+- https://github.com/orrsella/dotfiles
