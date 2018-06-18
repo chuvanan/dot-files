@@ -932,7 +932,7 @@
   :bind* (("C-s" . swiper)
           ("<f6>" . ivy-resume)
           ("C-x C-b" . ivy-switch-buffer)
-          ("C-c C-w" . ivy-wgrep-change-to-wgrep-mode)
+          ;; ("C-c C-w" . ivy-wgrep-change-to-wgrep-mode)
           ("C-c v" . ivy-push-view)
           ("C-c V" . ivy-pop-view)))
 
