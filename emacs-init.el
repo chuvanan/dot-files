@@ -228,10 +228,10 @@
 (add-hook 'redis-mode-hook 'sqlup-mode)
 (global-set-key (kbd "C-c u") 'sqlup-capitalize-keywords-in-region)
 
-(add-hook 'sql-mode-hook
-          (lambda ()
-            (setq comment-start "/* ")
-            (setq comment-end " */")))
+;; (add-hook 'sql-mode-hook **/
+;;           (lambda () **/
+;;             (setq comment-start "/* ") **/
+;;             (setq comment-end " *\/"))) **/
 
 ;; https://www.emacswiki.org/emacs/SqlQueryBuffer
 (defun my-sql-query-buffer (arg)
