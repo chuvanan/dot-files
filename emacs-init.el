@@ -560,6 +560,109 @@
   (unless (server-running-p)
     (server-start)))
 
+(use-package hydra
+  :config
+  (defhydra hydra-projectile (:color teal
+                                     :hint nil)
+    "
+     PROJECTILE: %(projectile-project-root)
+
+     Find File            Search/Tags          Buffers                Cache
+------------------------------------------------------------------------------------------
+_s-f_: file            _a_: ag                _i_: Ibuffer           _c_: cache clear
+ _ff_: file dwim       _g_: update gtags      _b_: switch to buffer  _x_: remove known project
+ _fd_: file curr dir   _o_: multi-occur     _s-k_: Kill all buffers  _X_: cleanup non-existing
+  _r_: recent file                                               ^^^^_z_: cache current
+  _d_: dir
+
+"
+    ("a"   projectile-ag)
+    ("b"   projectile-switch-to-buffer)
+    ("c"   projectile-invalidate-cache)
+    ("d"   projectile-find-dir)
+    ("s-f" projectile-find-file)
+    ("ff"  projectile-find-file-dwim)
+    ("fd"  projectile-find-file-in-directory)
+    ("g"   ggtags-update-tags)
+    ("s-g" ggtags-update-tags)
+    ("i"   projectile-ibuffer)
+    ("K"   projectile-kill-buffers)
+    ("s-k" projectile-kill-buffers)
+    ("m"   projectile-multi-occur)
+    ("o"   projectile-multi-occur)
+    ("s-p" projectile-switch-project "switch project")
+    ("p"   projectile-switch-project)
+    ("s"   projectile-switch-project)
+    ("r"   projectile-recentf)
+    ("x"   projectile-remove-known-project)
+    ("X"   projectile-cleanup-known-projects)
+    ("z"   projectile-cache-current-file)
+    ("`"   hydra-projectile-other-window/body "other window")
+    ("q"   nil "cancel" :color blue))
+  (bind-key "<f5>" 'hydra-projectile/body)
+  )
+
+(use-package smartparens-config
+  :ensure smartparens
+  :diminish smartparens-mode
+  :config
+  (smartparens-global-mode 1)
+  (add-hook 'comint-mode-hook 'smartparens-mode)
+
+  (defhydra hydra-smartparens (:idle 0 :hint nil)
+    "
+Sexps (quit with _q_)
+
+^Nav^            ^Barf/Slurp^          ^Depth^
+^---^------------^----------^----------^-----^-----------------------
+_f_: forward     _s_:  slurp forward   _R_:      splice
+_b_: backward    _S_:  barf forward    _r_:      raise
+_a_: begin       _d_:  slurp backward  _<up>_:   raise backward
+_e_: end         _D_:  barf backward   _<down>_: raise forward
+_m_: mark
+
+^Kill^           ^Misc^                       ^Wrap^
+^----^-----------^----^-----------------------^----^------------------
+_w_: copy        _j_: join                    _(_: wrap with ( )
+_k_: kill        _s_: split                   _{_: wrap with { }
+^^               _t_: transpose               _'_: wrap with ' '
+^^               _c_: convolute               _\"_: wrap with \" \"
+^^               _i_: indent defun"
+    ("q" nil)
+    ;; Wrapping
+    ("(" (lambda (a) (interactive "P") (sp-wrap-with-pair "(")))
+    ("{" (lambda (a) (interactive "P") (sp-wrap-with-pair "{")))
+    ("'" (lambda (a) (interactive "P") (sp-wrap-with-pair "'")))
+    ("\"" (lambda (a) (interactive "P") (sp-wrap-with-pair "\"")))
+    ;; Navigation
+    ("f" sp-beginning-of-next-sexp)
+    ("b" sp-beginning-of-previous-sexp)
+    ("a" sp-beginning-of-sexp)
+    ("e" sp-end-of-sexp)
+    ("m" sp-mark-sexp)
+    ;; Kill/copy
+    ("w" sp-copy-sexp :exit t)
+    ("k" sp-kill-sexp :exit t)
+    ;; Misc
+    ("t" sp-transpose-sexp)
+    ("j" sp-join-sexp)
+    ("c" sp-convolute-sexp)
+    ("i" sp-indent-defun)
+    ;; Depth changing
+    ("R" sp-splice-sexp)
+    ("r" sp-splice-sexp-killing-around)
+    ("<up>" sp-splice-sexp-killing-backward)
+    ("<down>" sp-splice-sexp-killing-forward)
+    ;; Barfing/slurping
+    ("s" sp-forward-slurp-sexp)
+    ("S" sp-forward-barf-sexp)
+    ("D" sp-backward-barf-sexp)
+    ("d" sp-backward-slurp-sexp))
+
+  (bind-key "M-<backspace>" 'sp-unwrap-sexp)
+  (bind-key "C-c s" 'hydra-smartparens/body)
+  )
+
 ;; -----------------------------------------------------------------------------
 ;; ESS
 ;; -----------------------------------------------------------------------------
