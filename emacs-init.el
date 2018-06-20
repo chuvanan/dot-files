@@ -314,7 +314,7 @@
   (define-key yas-minor-mode-map (kbd "<backtab>") 'yas-expand))
 
 (use-package saveplace
-  :defer 1
+  :defer t
   :ensure t
   :init (save-place-mode 1))
 
@@ -381,7 +381,7 @@
 
 ;; https://www.emacswiki.org/emacs/uniquify
 ;; (use-package uniquify
-;;   :defer 1
+;;   :defer t
 ;;   :config
 ;;   (setq uniquify-buffer-name-style 'forward)
 ;;   (setq uniquify-separator "/")
@@ -408,7 +408,7 @@
   (which-key-mode +1))
 
 (use-package recentf
-  :defer 1
+  :defer t
   :config
   (setq recentf-max-saved-items 500
         recentf-max-menu-items 15
@@ -422,7 +422,7 @@
 ;;   (add-hook 'dired-mode-hook 'auto-revert-mode))
 
 (use-package dired-subtree
-  :defer 1
+  :defer t
   :config
   (bind-keys :map dired-mode-map
              ("i" . dired-subtree-insert)
@@ -440,7 +440,7 @@
 
 ;; https://github.com/magnars/expand-region.el
 (use-package expand-region
-  :defer 1
+  :defer t
   :commands er/expand-region
   :bind ("C-=" . er/expand-region))
 
@@ -510,7 +510,7 @@
 
 ;; https://github.com/Wilfred/ag.el
 (use-package ag
-  :defer 1
+  :defer t
   :init
   ;; Truncate long results
   (add-hook 'ag-mode-hook (lambda () (setq truncate-lines t)))
