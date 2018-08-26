@@ -1,0 +1,39 @@
+
+
+
+#+BEGIN_SRC r
+options(servr.daemon = TRUE,
+        blogdown.author = "An Chu",
+        blogdown.ext = ".Rmd",
+        blogdown.subdir = "post",
+        workflow.daemon = TRUE,
+        rta.account = "rta_anchu")
+
+## general options
+options(width = 120)
+options(repos = c("https://packages.rtcenter.org", "https://cran.rstudio.com/"))
+
+## make cairo as default graphic engine
+setHook(packageEvent("grDevices", "onLoad"),
+        function(...) grDevices::X11.options(type = 'cairo'))
+options(device = 'x11')
+
+## warn on partial matches
+## options(warnPartialMatchAttr = TRUE,
+##         warnPartialMatchDollar = TRUE,
+##         warnPartialMatchArgs = TRUE)
+
+## enable autocompletions for package names in
+## `require()`, `library()`
+utils::rc.settings(ipck = TRUE)
+
+## Enables detection of functions.
+utils::rc.settings(func = TRUE)
+
+## warnings are errors
+## options(warn = 2L)
+
+## fancy quotes are annoying and lead to
+## 'copy + paste' bugs / frustrations
+options(useFancyQuotes = FALSE)
+#+END_SRC
