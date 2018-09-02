@@ -12,3 +12,9 @@ alias sshn="sudo shutdown -h now"
 
 # Caps Lock as Ctrl
 alias scasc="setxkbmap -option ctrl:nocaps"
+
+# A better cat
+alias cat="bat"
+
+# tldr
+alias help='tldr'
