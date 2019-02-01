@@ -6,7 +6,7 @@
 ;; -----------------------------------------------------------------------------
 
 (require 'package)
-(package-initialize)
+;; (package-initialize)
 (setq package-enable-at-startup nil)    ; to prevent accidentally loading packages twice
 
 (let ((minver "26.1"))
@@ -43,7 +43,7 @@
 (setq use-package-always-ensure t)
 (use-package diminish)                  ; to enable :diminish
 (use-package bind-key)                  ; to enable :bind
-(setq load-prefer-newer t)              ; always load newest byte code
+;; (setq load-prefer-newer t)              ; always load newest byte code
 
 ;; -----------------------------------------------------------------------------
 ;; General configuration
@@ -58,7 +58,7 @@
 
 ;; I prefer a central place for all backup files
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
-(setq delete-old-versions t)
+(setq delete-old-versions t)            ; delete excess backup versions silently.
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
 
 ;; Disabled confused commands
@@ -79,7 +79,6 @@
 
 ;; UX
 (global-hl-line-mode +1)
-(global-prettify-symbols-mode +1)
 
 (setq line-move-visual t)
 
@@ -219,50 +218,6 @@
 ;; vc-diff shortcut
 (global-set-key (kbd "<f10>") 'vc-diff)
 
-;; Config for SQLi
-(add-hook 'sql-interactive-mode-hook
-          (lambda ()
-            (toggle-truncate-lines t)))
-(add-hook 'sql-mode-hook 'sqlup-mode)
-;; (add-hook 'sql-interactive-mode-hook 'sqlup-mode)
-(add-hook 'redis-mode-hook 'sqlup-mode)
-(global-set-key (kbd "C-c u") 'sqlup-capitalize-keywords-in-region)
-
-;; (add-hook 'sql-mode-hook **/
-;;           (lambda () **/
-;;             (setq comment-start "/* ") **/
-;;             (setq comment-end " *\/"))) **/
-
-;; https://www.emacswiki.org/emacs/SqlQueryBuffer
-(defun my-sql-query-buffer (arg)
-  "Open a `sql-mode' buffer which interacts with the current SQLi buffer.
- Switches to an existing buffer if possible, otherwise creates a new buffer.
- With C-u prefix arg, always creates a new buffer."
-  (interactive "P")
-  (let ((sqlibuf (current-buffer)))
-    (if (null (sql-buffer-live-p sqlibuf))
-        (error "Buffer %s is not a working SQLi buffer" sqlibuf)
-      (let ((product sql-product)
-            (querybuf
-             (or (and (not (consp arg)) ;; prefix arg
-                      (boundp 'my-sql-query-buffer)
-                      (buffer-live-p (get-buffer my-sql-query-buffer))
-                      (get-buffer my-sql-query-buffer))
-                 (generate-new-buffer
-                  (format "*SQL ctl: %s*" (buffer-name sqlibuf))))))
-        (setq-local my-sql-query-buffer querybuf)
-        (pop-to-buffer querybuf '(display-buffer-reuse-window
-                                  . ((reusable-frames . visible))))
-        (unless (eq major-mode 'sql-mode)
-          (sql-mode)
-          (setq sql-product product)
-          (sql-highlight-product)
-          (setq sql-buffer sqlibuf)
-          (run-hooks 'sql-set-sqli-hook))))))
-
-(eval-after-load "sql"
-  '(define-key sql-interactive-mode-map (kbd "C-c q") 'my-sql-query-buffer))
-
 ;; -----------------------------------------------------------------------------
 ;; use-package packages
 ;; -----------------------------------------------------------------------------
@@ -313,10 +268,10 @@
   (define-key yas-minor-mode-map (kbd "TAB") nil)
   (define-key yas-minor-mode-map (kbd "<backtab>") 'yas-expand))
 
-(use-package saveplace
-  :defer t
+;; https://polymode.github.io/installation/
+(use-package poly-markdown
   :ensure t
-  :init (save-place-mode 1))
+  :pin melpa-stable)
 
 ;; https://github.com/vspinu/polymode
 (use-package polymode
@@ -338,30 +293,18 @@
   (add-to-list 'auto-mode-alist '("\\.Rmd$" . poly-markdown+r-mode))
   (add-to-list 'auto-mode-alist '("\\.Rcpp$" . poly-r+c++-mode))
   (add-to-list 'auto-mode-alist '("\\.cppR$" . poly-c++r-mode))
-  (define-key polymode-mode-map "\M-p" 'fill-paragraph))
-
-;; built-in package
-(use-package savehist
-  :init (savehist-mode t)
-  :config
-  (setq savehist-save-minibuffer-history t
-        savehist-autosave-interval 180
-        history-delete-duplicates t)
-  (setq savehist-additional-variables
-        '(kill-ring
-          search-ring
-          regexp-search-ring)))
+  )
 
 ;; https://github.com/Fanael/rainbow-delimiters
 (use-package rainbow-delimiters)
 
 ;; https://github.com/syohex/emacs-anzu
-(use-package anzu
-  :diminish anzu-mode
-  :config
-  (global-anzu-mode t)
-  (global-set-key [remap query-replace-regexp] 'anzu-query-replace-regexp)
-  (global-set-key [remap query-replace] 'anzu-query-replace))
+;; (use-package anzu
+;;   :diminish anzu-mode
+;;   :config
+;;   (global-anzu-mode t)
+;;   (global-set-key [remap query-replace-regexp] 'anzu-query-replace-regexp)
+;;   (global-set-key [remap query-replace] 'anzu-query-replace))
 
 ;; https://github.com/nflath/hungry-delete
 (use-package hungry-delete
@@ -379,24 +322,6 @@
   :config
   (define-key markdown-mode-map "\M-p" 'fill-paragraph))
 
-;; https://www.emacswiki.org/emacs/uniquify
-;; (use-package uniquify
-;;   :defer t
-;;   :config
-;;   (setq uniquify-buffer-name-style 'forward)
-;;   (setq uniquify-separator "/")
-;;   ;; rename after killing uniquified
-;;   (setq uniquify-after-kill-buffer-p t)
-;;   ;; don't muck with special buffers
-;;   (setq uniquify-ignore-buffers-re "^\\*"))
-
-;; Don't know why use-package failed to load uniquify
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'forward)
-(setq uniquify-separator "/")
-(setq uniquify-after-kill-buffer-p t)
-(setq uniquify-ignore-buffers-re "^\\*")
-
 ;; https://github.com/abo-abo/avy
 (use-package avy
   :bind (("M-s M-s" . avy-goto-word-or-subword-1)))
@@ -406,27 +331,6 @@
   :diminish which-key-mode
   :config
   (which-key-mode +1))
-
-(use-package recentf
-  :defer t
-  :config
-  (setq recentf-max-saved-items 500
-        recentf-max-menu-items 15
-        recentf-auto-cleanup 'never)
-  (recentf-mode +1))
-
-;; (use-package dired+
-;;   :load-path "~/.emacs.d/elpa/dired+"
-;;   :config
-;;   (setq dired-listing-switches "-alh")
-;;   (add-hook 'dired-mode-hook 'auto-revert-mode))
-
-(use-package dired-subtree
-  :defer t
-  :config
-  (bind-keys :map dired-mode-map
-             ("i" . dired-subtree-insert)
-             (";" . dired-subtree-remove)))
 
 ;; https://github.com/nschum/window-numbering.el
 (use-package window-numbering
@@ -462,6 +366,7 @@
   (projectile-mode +1)
   (setq projectile-completion-system 'ivy)
   (setq projectile-enable-caching t)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
   :bind (("<f11>" . projectile-vc)))
 
 ;; https://github.com/aspiers/smooth-scrolling/
@@ -553,116 +458,6 @@
   (powerline-center-theme)
   (setq powerline-arrow-shape 'arrow14))
 
-;; built-in package
-(use-package server
-  :defer 1
-  :config
-  (unless (server-running-p)
-    (server-start)))
-
-(use-package hydra
-  :config
-  (defhydra hydra-projectile (:color teal
-                                     :hint nil)
-    "
-     PROJECTILE: %(projectile-project-root)
-
-     Find File            Search/Tags          Buffers                Cache
-------------------------------------------------------------------------------------------
-_s-f_: file            _a_: ag                _i_: Ibuffer           _c_: cache clear
- _ff_: file dwim       _g_: update gtags      _b_: switch to buffer  _x_: remove known project
- _fd_: file curr dir   _o_: multi-occur     _s-k_: Kill all buffers  _X_: cleanup non-existing
-  _r_: recent file                                               ^^^^_z_: cache current
-  _d_: dir
-
-"
-    ("a"   projectile-ag)
-    ("b"   projectile-switch-to-buffer)
-    ("c"   projectile-invalidate-cache)
-    ("d"   projectile-find-dir)
-    ("s-f" projectile-find-file)
-    ("ff"  projectile-find-file-dwim)
-    ("fd"  projectile-find-file-in-directory)
-    ("g"   ggtags-update-tags)
-    ("s-g" ggtags-update-tags)
-    ("i"   projectile-ibuffer)
-    ("K"   projectile-kill-buffers)
-    ("s-k" projectile-kill-buffers)
-    ("m"   projectile-multi-occur)
-    ("o"   projectile-multi-occur)
-    ("s-p" projectile-switch-project "switch project")
-    ("p"   projectile-switch-project)
-    ("s"   projectile-switch-project)
-    ("r"   projectile-recentf)
-    ("x"   projectile-remove-known-project)
-    ("X"   projectile-cleanup-known-projects)
-    ("z"   projectile-cache-current-file)
-    ("`"   hydra-projectile-other-window/body "other window")
-    ("q"   nil "cancel" :color blue))
-  (bind-key "<f5>" 'hydra-projectile/body)
-  )
-
-(use-package smartparens-config
-  :ensure smartparens
-  :diminish smartparens-mode
-  :config
-  (smartparens-global-mode 1)
-  (add-hook 'comint-mode-hook 'smartparens-mode)
-
-  (defhydra hydra-smartparens (:idle 0 :hint nil)
-    "
-Sexps (quit with _q_)
-
-^Nav^            ^Barf/Slurp^          ^Depth^
-^---^------------^----------^----------^-----^-----------------------
-_f_: forward     _s_:  slurp forward   _R_:      splice
-_b_: backward    _S_:  barf forward    _r_:      raise
-_a_: begin       _d_:  slurp backward  _<up>_:   raise backward
-_e_: end         _D_:  barf backward   _<down>_: raise forward
-_m_: mark
-
-^Kill^           ^Misc^                       ^Wrap^
-^----^-----------^----^-----------------------^----^------------------
-_w_: copy        _j_: join                    _(_: wrap with ( )
-_k_: kill        _s_: split                   _{_: wrap with { }
-^^               _t_: transpose               _'_: wrap with ' '
-^^               _c_: convolute               _\"_: wrap with \" \"
-^^               _i_: indent defun"
-    ("q" nil)
-    ;; Wrapping
-    ("(" (lambda (a) (interactive "P") (sp-wrap-with-pair "(")))
-    ("{" (lambda (a) (interactive "P") (sp-wrap-with-pair "{")))
-    ("'" (lambda (a) (interactive "P") (sp-wrap-with-pair "'")))
-    ("\"" (lambda (a) (interactive "P") (sp-wrap-with-pair "\"")))
-    ;; Navigation
-    ("f" sp-beginning-of-next-sexp)
-    ("b" sp-beginning-of-previous-sexp)
-    ("a" sp-beginning-of-sexp)
-    ("e" sp-end-of-sexp)
-    ("m" sp-mark-sexp)
-    ;; Kill/copy
-    ("w" sp-copy-sexp :exit t)
-    ("k" sp-kill-sexp :exit t)
-    ;; Misc
-    ("t" sp-transpose-sexp)
-    ("j" sp-join-sexp)
-    ("c" sp-convolute-sexp)
-    ("i" sp-indent-defun)
-    ;; Depth changing
-    ("R" sp-splice-sexp)
-    ("r" sp-splice-sexp-killing-around)
-    ("<up>" sp-splice-sexp-killing-backward)
-    ("<down>" sp-splice-sexp-killing-forward)
-    ;; Barfing/slurping
-    ("s" sp-forward-slurp-sexp)
-    ("S" sp-forward-barf-sexp)
-    ("D" sp-backward-barf-sexp)
-    ("d" sp-backward-slurp-sexp))
-
-  (bind-key "M-<backspace>" 'sp-unwrap-sexp)
-  (bind-key "C-c s" 'hydra-smartparens/body)
-  )
-
 ;; -----------------------------------------------------------------------------
 ;; ESS
 ;; -----------------------------------------------------------------------------
@@ -683,8 +478,8 @@ _k_: kill        _s_: split                   _{_: wrap with { }
   (add-hook 'inferior-ess-mode-hook 'ansi-color-for-comint-mode-on)
   (add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
   (setq ess-ask-for-ess-directory nil)
-  (setq ess-eval-visibly nil)
-  (setq ess-use-flymake nil)
+  ;; (setq ess-eval-visibly nil)
+  (setq ess-use-flymake t)
   (setq ess-roxy-fold-examples t)
   (setq ess-roxy-fontify-examples t)
   (setq ess-use-company nil)
@@ -692,13 +487,9 @@ _k_: kill        _s_: split                   _{_: wrap with { }
   (setq ess-offset-arguments 'prev-line)
 
   ;; fix assignment key
-  (setq ess-S-assign-key (kbd "M--"))
-  (ess-toggle-S-assign-key t) ; enable above key definition
-  ;; leave my underscore key alone!
-  (ess-toggle-S-assign nil)
-  (ess-toggle-S-assign nil)
   (ess-toggle-underscore nil)
-  (ess-disable-smart-S-assign nil)
+  (setq ess-insert-assign (car ess-assign-list))
+  (bind-key "M--" 'ess-insert-assign)
 
   (setq ess-use-eldoc 'script-only)
   (setq ess-eldoc-show-on-symbol nil)
@@ -860,7 +651,7 @@ _k_: kill        _s_: split                   _{_: wrap with { }
         (switch-to-buffer rmd-buf)
         (ess-show-buffer (buffer-name sbuffer) nil)))))
 
-(define-key polymode-mode-map "\M-np" 'anchu/ess-publish-rmd)
+;; (define-key polymode-mode-map "\M-np" 'anchu/ess-publish-rmd)
 
 (defun anchu/insert-minor-section ()
   "Insert minor section heading for a snippet of R codes."
@@ -940,82 +731,6 @@ _k_: kill        _s_: split                   _{_: wrap with { }
   )
 
 (define-key ess-mode-map (kbd "C-c C-a d") 'anchu/insert-named-comment)
-
-;; -----------------------------------------------------------------------------
-;; Python
-;; -----------------------------------------------------------------------------
-
-(use-package python
-  :mode ("\\.py\\'" . python-mode)
-  :config
-  (setq python-shell-interpreter "python3"))
-
-(use-package elpy
-  :after python
-  :init
-  ;; Truncate long line in inferior mode
-  (add-hook 'inferior-python-mode-hook (lambda () (setq truncate-lines t)))
-  ;; Enable company
-  (add-hook 'python-mode-hook 'company-mode)
-  (add-hook 'inferior-python-mode-hook 'company-mode)
-  ;; Enable highlight indentation
-  (add-hook 'highlight-indentation-mode-hook
-            'highlight-indentation-current-column-mode)
-  ;; Enable elpy
-  (elpy-enable)
-  :config
-  ;; Do not enable elpy flymake for now
-  (remove-hook 'elpy-modules 'elpy-module-flymake)
-  (remove-hook 'elpy-modules 'elpy-module-highlight-indentation)
-
-  ;; The old `elpy-use-ipython' is obseleted, see:
-  ;; https://elpy.readthedocs.io/en/latest/ide.html#interpreter-setup
-  ;; (setq python-shell-interpreter "ipython3"
-  ;; python-shell-interpreter-args "-i --simple-prompt")
-  (setq python-shell-interpreter "jupyter"
-        python-shell-interpreter-args "console --simple-prompt"
-        python-shell-prompt-detect-failure-warning nil
-        python-shell-completion-native-disabled-interpreters '("python"))
-  (add-to-list 'python-shell-completion-native-disabled-interpreters
-               "jupyter")
-
-  (setq elpy-rpc-python-command "python3")
-
-  ;; Completion backend
-  (setq elpy-rpc-backend "jedi")
-
-  ;; Function: send block to elpy: bound to C-c C-c
-  (defun forward-block (&optional n)
-    (interactive "p")
-    (let ((n (if (null n) 1 n)))
-      (search-forward-regexp "\n[\t\n ]*\n+" nil "NOERROR" n)))
-
-  (defun elpy-shell-send-current-block ()
-    (interactive)
-    (beginning-of-line)
-    "Send current block to Python shell."
-    (push-mark)
-    (forward-block)
-    (elpy-shell-send-region-or-buffer)
-    (display-buffer (process-buffer (elpy-shell-get-or-create-process))
-                    nil
-                    'visible))
-
-  ;; Font-lock
-  (add-hook 'python-mode-hook
-            '(lambda()
-               (font-lock-add-keywords
-                nil
-                '(("\\<\\([_A-Za-z0-9]*\\)(" 1
-                   font-lock-function-name-face) ; highlight function names
-                  ))))
-
-  :bind
-  (:map python-mode-map
-        ("C-c <RET>" . elpy-shell-send-region-or-buffer)
-        ("C-c C-c" . elpy-send-current-block))
-  )
-
 
 ;; -----------------------------------------------------------------------------
 ;; Ivy
@@ -1296,8 +1011,7 @@ sequentially."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   (quote
-    (dired+ ob crux dired uniquify zenburn-theme yaml-mode window-numbering which-key wgrep-ag use-package undo-tree solarized-theme smooth-scrolling smartparens rainbow-delimiters python-mode python powerline polymode paradox org-bullets nord-theme neotree multiple-cursors markdown-mode magit ledger-mode jedi ivy-historian inlineR imenu-anywhere iedit ibuffer-vc ibuffer-projectile hungry-delete helm-projectile gruvbox-theme goto-last-change fullframe expand-region eval-in-repl ess elpy electric-operator e2wm-R dumb-jump dired-subtree diminish dashboard counsel-projectile company-ycmd company-jedi color-theme-sanityinc-tomorrow anzu all-the-icons-ivy all-the-icons-dired aggressive-indent ag))))
+   '(olivetti dired+ ob crux dired uniquify zenburn-theme yaml-mode window-numbering which-key wgrep-ag use-package undo-tree solarized-theme smooth-scrolling smartparens rainbow-delimiters python-mode python powerline polymode paradox org-bullets nord-theme neotree multiple-cursors markdown-mode magit ledger-mode jedi ivy-historian inlineR imenu-anywhere iedit ibuffer-vc ibuffer-projectile hungry-delete helm-projectile gruvbox-theme goto-last-change fullframe expand-region eval-in-repl ess elpy electric-operator e2wm-R dumb-jump dired-subtree diminish dashboard counsel-projectile company-ycmd company-jedi color-theme-sanityinc-tomorrow anzu all-the-icons-ivy all-the-icons-dired aggressive-indent ag)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
