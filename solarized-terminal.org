@@ -1,0 +1,16 @@
+
+** Solarized color-scheme for Gnome terminal
+
+#+BEGIN_SRC bash
+sudo apt-get install dconf-cli
+#+END_SRC
+
+#+BEGIN_SRC bash
+git clone https://github.com/Anthony25/gnome-terminal-colors-solarized.git
+cd gnome-terminal-colors-solarized
+/install.sh --install-dircolors
+#+END_SRC
+
+** Source:
+
+- https://github.com/Anthony25/gnome-terminal-colors-solarized
