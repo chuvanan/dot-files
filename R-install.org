@@ -59,3 +59,6 @@ setHook(packageEvent("grDevices", "onLoad"),
         function(...) grDevices::X11.options(type = 'cairo'))
 options(device = 'x11')
 #+END_SRC
+
+P/S: I've updated the build configuration with the removal of *--with-lapack* as
+it is strongly advised by the official R [[https://cran.r-project.org/doc/manuals/r-release/R-admin.html#LAPACK][documentation]].
