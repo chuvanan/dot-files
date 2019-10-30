@@ -7,6 +7,9 @@ git config user.email "chuvanan.cva@gmail.com"
 # editor
 git config --global core.editor "emacs"
 
+# cache credentials for HTTPS
+git config --global credential.helper 'cache --timeout=10000000' # store password for 10 mil seconds
+
 # alias
 git config --global alias.co checkout
 git config --global alias.br branch
