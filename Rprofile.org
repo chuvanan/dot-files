@@ -47,9 +47,9 @@ setHook(packageEvent("grDevices", "onLoad"),
 options(device = 'x11')
 
 ## warn on partial matches
-## options(warnPartialMatchAttr = TRUE,
-##         warnPartialMatchDollar = TRUE,
-##         warnPartialMatchArgs = TRUE)
+options(warnPartialMatchAttr = TRUE,
+        warnPartialMatchDollar = TRUE,
+        warnPartialMatchArgs = TRUE)
 
 ## enable autocompletions for package names in
 ## `require()`, `library()`
@@ -58,6 +58,8 @@ utils::rc.settings(ipck = TRUE)
 ## Enables detection of functions.
 utils::rc.settings(func = TRUE)
 
+utils::rc.options(funarg.suffix = " = ")
+
 ## warnings are errors
 ## options(warn = 2L)
 
@@ -65,9 +67,11 @@ utils::rc.settings(func = TRUE)
 ## 'copy + paste' bugs / frustrations
 options(useFancyQuotes = FALSE)
 
-Sys.setenv("_R_CHECK_LENGTH_1_CONDITION_" = "true")
-Sys.setenv("_R_CHECK_LENGTH_1_LOGIC2_" = "true")
+Sys.setenv("_R_CHECK_LENGTH_1_CONDITION_" = "verbose")
+Sys.setenv("_R_CHECK_LENGTH_1_LOGIC2_" = "verbose")
 
 ## managing search path conflicts (from R-3.6.0)
-options(conflicts.policy = "strict")
+## options(conflicts.policy = "strict")
+
+options(browser = "/usr/bin/google-chrome-stable")
 #+END_SRC
