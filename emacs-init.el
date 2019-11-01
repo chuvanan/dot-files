@@ -6,7 +6,7 @@
 ;; -----------------------------------------------------------------------------
 
 (require 'package)
-;; (package-initialize)
+(package-initialize)
 (setq package-enable-at-startup nil)    ; to prevent accidentally loading packages twice
 
 (let ((minver "26.1"))
@@ -49,6 +49,7 @@
 ;; General configuration
 ;; -----------------------------------------------------------------------------
 
+
 ;; Reduce the frequency of garbage collection by making it happen on
 ;; each 50MB of allocated data (the default is on every 0.76MB)
 (setq gc-cons-threshold 50000000)
@@ -67,7 +68,7 @@
 
 ;; Font for source code
 (when (member "Hasklig" (font-family-list))
-  (set-frame-font "Hasklig 10" nil t))
+  (set-frame-font "Hasklig-11:weight=semibold" nil t))
 
 ;; Space is expensive. So remove unnecessary GUI element
 (tool-bar-mode -1)
@@ -79,6 +80,7 @@
 
 ;; UX
 (global-hl-line-mode +1)
+;; (global-visual-line-mode)
 
 (setq line-move-visual t)
 
@@ -86,7 +88,7 @@
       scroll-margin 5
       hscroll-step 1
       hscroll-margin 3
-      scroll-conservatively  10000)
+      scroll-conservatively  10000)     ; when point moves offscreen, don't jump to recenter it
 
 (set-face-attribute 'vertical-border nil :foreground (face-attribute 'fringe :background))
 (set-fringe-mode '(4 . 0))
@@ -218,6 +220,9 @@
 ;; vc-diff shortcut
 (global-set-key (kbd "<f10>") 'vc-diff)
 
+;; turn off eldoc globally
+;; (global-eldoc-mode -1)
+
 ;; -----------------------------------------------------------------------------
 ;; use-package packages
 ;; -----------------------------------------------------------------------------
@@ -257,16 +262,51 @@
   (global-set-key (kbd "C-c C->") 'mc/mark-all-like-this))
 
 ;; https://github.com/joaotavora/yasnippet
+;; (use-package yasnippet
+;;   :diminish yas-minor-mode
+;;   :init
+;;   :config
+;;   (yas-reload-all)
+;;   (add-hook 'ess-mode-hook #'yas-minor-mode)
+;;   (setq yas-snippet-dirs (format "%s%s" user-emacs-directory "snippets"))
+;;   (define-key yas-minor-mode-map (kbd "<tab>") nil)
+;;   (define-key yas-minor-mode-map (kbd "TAB") nil)
+;;   (define-key yas-minor-mode-map (kbd "<backtab>") 'yas-expand))
+
 (use-package yasnippet
-  :diminish yas-minor-mode
   :init
+  ;; It will test whether it can expand, if yes, change cursor color}
+  ;; (defun yasnippet-can-fire-p (&optional field)
+  ;;   (interactive)
+  ;;   (setq yas--condition-cache-timestamp (current-time))
+  ;;   (let (templates-and-pos)
+  ;;     (unless (and yas-expand-only-for-last-commands
+  ;;                  (not (member last-command yas-expand-only-for-last-commands)))
+  ;;       (setq templates-and-pos (if field
+  ;;                                   (save-restriction
+  ;;                                     (narrow-to-region (yas--field-start field)
+  ;;                                                       (yas--field-end field))
+  ;;                                     (yas--templates-for-key-at-point))
+  ;;                                 (yas--templates-for-key-at-point))))
+
+  ;;     (set-cursor-color (if (and templates-and-pos (first templates-and-pos))
+  ;;                           "#d65d0e" (face-attribute 'default :foreground)))))
+  ;; (add-hook 'post-command-hook 'yasnippet-can-fire-p)
+
+  (yas-global-mode 1)
+
   :config
+  (setq yas-fallback-behavior 'call-other-command)
+
+  (setq yas-snippet-dirs-custom (format "%s/%s" user-emacs-directory "snippets/"))
+  (add-to-list' yas-snippet-dirs 'yas-snippet-dirs-custom)
   (yas-reload-all)
-  (add-hook 'ess-mode-hook #'yas-minor-mode)
-  (setq yas-snippet-dirs (format "%s%s" user-emacs-directory "snippets"))
-  (define-key yas-minor-mode-map (kbd "<tab>") nil)
-  (define-key yas-minor-mode-map (kbd "TAB") nil)
-  (define-key yas-minor-mode-map (kbd "<backtab>") 'yas-expand))
+
+  :bind*
+  (("<C-tab>" . yas-insert-snippet)
+   :map yas-minor-mode-map
+   ("`" . yas-expand-from-trigger-key))
+  )
 
 ;; https://polymode.github.io/installation/
 (use-package poly-markdown
@@ -362,12 +402,26 @@
 
 ;; https://github.com/bbatsov/projectile
 (use-package projectile
+  :diminish projectile-mode
   :config
   (projectile-mode +1)
   (setq projectile-completion-system 'ivy)
   (setq projectile-enable-caching t)
+  (setq projectile-sort-order 'recently-active)
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
   :bind (("<f11>" . projectile-vc)))
+
+;; Common functions:
+;; c-p f: find all files in the project
+;; c-p d: find all directories in the project
+;; c-p s g: run grep on the files in the project
+;; c-p o: multi-occur on all project buffers currently open
+;; c-p i: invalidate project caches
+;; c-p k: kill project buffers
+;; c-p D: open the root of the project in Dired
+;; c-p e: show recently visited files
+;; c-p z: add currently visited file to the cache
+;; c-p p: display a list known projects
 
 ;; https://github.com/aspiers/smooth-scrolling/
 (use-package smooth-scrolling
@@ -379,10 +433,14 @@
 (use-package dashboard
   :config
   (dashboard-setup-startup-hook)
+  (setq dashboard-startup-banner "~/.emacs.d/mo.png")
+  (setq dashboard-center-content t)
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-navigator nil)
+  (setq dashboard-set-footer nil)
   (setq dashboard-items '((recents  . 5)
                           (bookmarks . 5)
-                          (projects . 5)
-                          (agenda . 5))))
+                          (projects . 5))))
 
 ;; https://github.com/davidshepherd7/electric-operator
 (use-package electric-operator
@@ -390,8 +448,18 @@
   (setq electric-operator-R-named-argument-style 'spaced)
   (add-hook 'ess-mode-hook #'electric-operator-mode)
   (add-hook 'inferior-ess-mode-hook #'electric-operator-mode)
-  (add-hook 'python-mode-hook #'electric-operator-mode)
-  (electric-operator-add-rules-for-mode 'ess-mode
+  (add-hook 'c++-mode-hook #'electric-operator-mode)
+  ;; (add-hook 'python-mode-hook #'electric-operator-mode)
+  (electric-operator-add-rules-for-mode 'c++-mode
+                                        (cons "," ", ")
+                                        (cons "=" " = ")
+                                        (cons "!=" " != ")
+                                        (cons "<=" " <= ")
+                                        (cons ">=" " >= ")
+                                        (cons ">" " > ")
+                                        (cons "<" " < ")
+                                        (cons ";" "; "))
+  (electric-operator-add-rules-for-mode 'ess-r-mode
                                         (cons ":=" " := ")
                                         (cons "%" nil)
                                         (cons "%in%" " %in% ")
@@ -399,8 +467,9 @@
                                         (cons "!=" " != ")
                                         (cons "<=" " <= ")
                                         (cons ">=" " >= ")
+                                        (cons "~" " ~ ")
                                         (cons ";" "; "))
-  (electric-operator-add-rules-for-mode 'inferior-ess-mode
+  (electric-operator-add-rules-for-mode 'inferior-ess-r-mode
                                         (cons ":=" " := ")
                                         (cons "==" " == ")
                                         (cons "=" " = ")
@@ -425,6 +494,25 @@
   ;; Set ag to reuse the same buffer
   (setq ag-reuse-buffers nil))
 
+;; (use-package company
+;;   :diminish company-mode
+;;   :ensure t
+;;   :config
+;;   (global-company-mode t)
+;;   (setq company-idle-delay 0)
+;;   (setq company-echo-delay 0)
+;;   (setq company-begin-commands '(self-insert-command))
+;;   (setq company-minimum-prefix-length 3)
+;;   (setq-local company-backends
+;;               (append '(company-R-objects)
+;;                       company-backends))
+;;   :bind (:map company-active-map
+;;               ([tab] . company-complete-selection)
+;;               ("TAB" . company-complete-selection)
+;;               ("C-n" . company-select-next)
+;;               ("C-p" . company-select-previous)))
+
+
 ;; https://github.com/company-mode/company-mode
 (use-package company
   :diminish company-mode
@@ -436,21 +524,64 @@
   (setq company-idle-delay 0)
   (setq company-echo-delay 0)
   (setq company-begin-commands '(self-insert-command))
+  (setq company-dabbrev-downcase 0)
   (setq company-dabbrev-code-everywhere t)
   (setq company-dabbrev-code-ignore-case nil)
   (setq company-dabbrev-ignore-case nil)
+  (setq company-selection-wrap-around t
+        company-tooltip-align-annotations t) ; here
   (setq-local company-backends
-              (append '((company-dabbrev-code
-                         company-R-args
+              (append '((
+                         ;; company-dabbrev-code
+                         ;; company-R-args
                          company-R-objects
-                         company-jedi))
+                         company-irony))
                       company-backends))
-  (add-to-list 'company-dabbrev-code-modes 'ess-mode)
+  (add-to-list 'company-backends 'company-c-headers)
+  ;; (add-to-list 'company-dabbrev-code-modes 'ess-mode)
   :bind (:map company-active-map
-              ([tab] . company-complete-common-or-cycle)
-              ("TAB" . company-complete-common-or-cycle)
+              ([tab] . company-complete-selection)
+              ("TAB" . company-complete-selection)
               ("C-n" . company-select-next)
               ("C-p" . company-select-previous)))
+
+;; C/C++ development
+(use-package irony
+  :config
+  (progn
+    ;; If irony server was never installed, install it.
+    (unless (irony--find-server-executable) (call-interactively #'irony-install-server))
+
+    (add-hook 'c++-mode-hook 'irony-mode)
+    (add-hook 'c-mode-hook 'irony-mode)
+
+    ;; Use compilation database first, clang_complete as fallback.
+    (setq-default irony-cdb-compilation-databases '(irony-cdb-libclang
+                                                    irony-cdb-clang-complete))
+
+    (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+    )
+  )
+
+(add-hook 'c++-mode-hook (lambda () (setq comment-start "/* "
+                                          comment-end   " */"
+                                          comment-style 'aligned)))
+
+;; clang-format can be triggered using C-c C-f
+;; Create clang-format file using google style
+;; clang-format -style=google -dump-config > .clang-format
+;; https://github.com/sonatard/clang-format
+(use-package clang-format
+  :config
+  (define-key c++-mode-map (kbd "C-c i") 'clang-format-region)
+  (define-key c++-mode-map (kbd "C-c u") 'clang-format-buffer)
+  )
+
+;; https://github.com/ludwigpacifici/modern-cpp-font-lock
+(use-package modern-cpp-font-lock
+  :config
+  (modern-c++-font-lock-global-mode t)
+  )
 
 ;; https://github.com/milkypostman/powerline
 (use-package powerline
@@ -458,15 +589,47 @@
   (powerline-center-theme)
   (setq powerline-arrow-shape 'arrow14))
 
+;; https://github.com/Fuco1/smartparens
+(use-package smartparens-config
+  :ensure smartparens
+  :config
+  (add-hook 'ess-mode-hook #'smartparens-mode)
+  (add-hook 'inferior-ess-mode-hook #'smartparens-mode)
+
+  ;; keybinding management
+
+  (define-key sp-keymap (kbd "C-M-k") 'sp-kill-sexp)
+  (define-key sp-keymap (kbd "C-M-w") 'sp-copy-sexp)
+
+  (define-key sp-keymap (kbd "C-M-f") 'sp-forward-sexp)
+  (define-key sp-keymap (kbd "C-M-b") 'sp-backward-sexp)
+
+  (define-key sp-keymap (kbd "C-S-f") 'sp-forward-symbol)
+  (define-key sp-keymap (kbd "C-S-b") 'sp-backward-symbol)
+
+  (define-key sp-keymap (kbd "C-c s s") 'sp-forward-slurp-sexp)
+  (define-key sp-keymap (kbd "C-c s b") 'sp-forward-barf-sexp)
+
+  (define-key sp-keymap (kbd "C-M-<backspace>") 'sp-splice-sexp-killing-backward))
+
+;; -----------------------------------------------------------------------------
+;; C
+;; -----------------------------------------------------------------------------
+
+(setq-default c-basic-offset 4 c-default-style "linux")
+
 ;; -----------------------------------------------------------------------------
 ;; ESS
 ;; -----------------------------------------------------------------------------
 
+(add-to-list 'load-path "/home/anchu/.emacs.d/elpa/ess-20190814.1054")
+
 (use-package ess
   :defer t
   :init
-  (require 'ess-site)
-  (require 'ess-rutils)
+  ;; (require 'ess-r-mode)
+  ;; (require 'ess-site)
+  ;; (require 'ess-rutils)
   ;; Auto set width and length options when initiate new Ess processes
   :config
   (add-hook 'ess-post-run-hook 'ess-execute-screen-options)
@@ -476,24 +639,35 @@
               (add-hook 'local-write-file-hooks
                         (lambda () (ess-nuke-trailing-whitespace)))))
   (add-hook 'inferior-ess-mode-hook 'ansi-color-for-comint-mode-on)
+  (add-hook 'inferior-ess-mode-hook #'(lambda ()
+                                        (setq-local comint-use-prompt-regexp nil)
+                                        (setq-local inhibit-field-text-motion nil)))
   (add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
+  (setq comint-scroll-to-bottom-on-input 'this)
+  (setq comint-move-point-for-output 'others)
   (setq ess-ask-for-ess-directory nil)
-  ;; (setq ess-eval-visibly nil)
-  (setq ess-use-flymake t)
-  (setq ess-roxy-fold-examples t)
+  (setq ess-eval-visibly 'nowait)
+  (setq ess-use-flymake nil)
+  ;; (setq ess-r-flymake-linters '("infix_spaces_linter" . "commas_linter"))
+  (setq ess-roxy-fold-examples nil)
   (setq ess-roxy-fontify-examples t)
-  (setq ess-use-company nil)
+  (setq ess-use-company 'script-only)
+
+  (setq ess-r-flymake-lintr-cache nil)
+  (setq ess-history-directory "~/.R/")
   (setq inferior-R-args "--no-restore-history --no-save")
   (setq ess-offset-arguments 'prev-line)
+
+  (setq ess-indent-with-fancy-comments nil)
 
   ;; fix assignment key
   (ess-toggle-underscore nil)
   (setq ess-insert-assign (car ess-assign-list))
   (bind-key "M--" 'ess-insert-assign)
 
-  (setq ess-use-eldoc 'script-only)
   (setq ess-eldoc-show-on-symbol nil)
-  (setq ess-eldoc-abbreviation-style t)
+  (setq ess-eldoc-abbreviation-style 'mild)
+  (setq ess-use-eldoc nil)
   (setq comint-scroll-to-bottom-on-output t)
   :bind (:map ess-mode-map
               ("C-c C-w w" . ess-r-package-use-dir)
@@ -501,7 +675,9 @@
               ("<C-return>" . ess-eval-region-or-function-or-paragraph-and-step)
               ("<C-S-return>" . ess-eval-buffer)
               ("C-M-;" . comment-line)
-              ("C-S-<f10>" . inferior-ess-reload))
+              ("C-S-<f10>" . inferior-ess-reload)
+              ("<f5>" . ess-display-help-on-object)
+              ("<C-M-return>" . ess-eval-region-or-function-or-paragraph))
   :bind (:map inferior-ess-mode-map
               ("C-S-<f10>" . inferior-ess-reload)))
 
@@ -538,6 +714,21 @@
         (ess-fl-keyword:=)
         (ess-R-fl-keyword:F&T))))
 
+;; http://www.emacswiki.org/emacs/ess-edit.el
+(defun ess-edit-word-at-point ()
+  (save-excursion
+    (buffer-substring
+     (+ (point) (skip-chars-backward "a-zA-Z0-9._"))
+     (+ (point) (skip-chars-forward "a-zA-Z0-9._")))))
+;; eval any word where the cursor is (objects, functions, etc)
+(defun ess-eval-word ()
+  (interactive)
+  (let ((x (ess-edit-word-at-point)))
+    (ess-eval-linewise (concat x)))
+  )
+;; key binding
+(define-key ess-mode-map (kbd "<S-return>") 'ess-eval-word)
+
 ;; %>% operator
 (defun anchu/isnet_then_R_operator ()
   "R - %>% operator or 'then' pipe operator"
@@ -548,6 +739,18 @@
 
 (define-key ess-mode-map (kbd "C-S-m") 'anchu/isnet_then_R_operator)
 (define-key inferior-ess-mode-map (kbd "C-S-m") 'anchu/isnet_then_R_operator)
+
+;; ->. operator
+
+(defun anchu/insert_bizarro_pipe_operator ()
+  "R - %>% operator or 'then' pipe operator"
+  (interactive)
+  (just-one-space 1)
+  (insert "->.;")
+  (reindent-then-newline-and-indent))
+
+(define-key ess-mode-map (kbd "C-:") 'anchu/insert_bizarro_pipe_operator)
+(define-key inferior-ess-mode-map (kbd "C-:") 'anchu/insert_bizarro_pipe_operator)
 
 ;; %in% operator
 (defun anchu/insert_in_operator ()
@@ -604,6 +807,7 @@
         (ess-show-buffer (buffer-name sbuffer) nil)))))
 
 (define-key polymode-mode-map "\M-ns" 'anchu/ess-rmarkdown)
+(define-key polymode-mode-map (kbd "<f8>") 'anchu/ess-rmarkdown)
 
 (defun anchu/ess-rshiny ()
   "Compile R markdown (.Rmd). Should work for any output type."
@@ -627,6 +831,7 @@
         (ess-show-buffer (buffer-name sbuffer) nil)))))
 
 (define-key polymode-mode-map "\M-nr" 'anchu/ess-rshiny)
+(define-key polymode-mode-map (kbd "<f9>") 'anchu/ess-rshiny)
 
 (defun anchu/ess-publish-rmd ()
   "Publish R Markdown (.Rmd) to remote server"
@@ -651,6 +856,8 @@
         (switch-to-buffer rmd-buf)
         (ess-show-buffer (buffer-name sbuffer) nil)))))
 
+
+
 ;; (define-key polymode-mode-map "\M-np" 'anchu/ess-publish-rmd)
 
 (defun anchu/insert-minor-section ()
@@ -664,7 +871,7 @@
 (defun anchu/insert-r-code-chunk ()
   "Insert R Markdown code chunk."
   (interactive)
-  (insert "```{r, include=FALSE}\n")
+  (insert "```{r}\n")
   (insert "\n")
   (save-excursion
     (insert "\n")
@@ -748,11 +955,17 @@
         '((counsel-M-x . ivy--regex-fuzzy)
           (t . ivy--regex-plus)))
   :bind* (("C-s" . swiper)
-          ("<f6>" . ivy-resume)
+          ("<f6>" . ivy-switch-buffer)
           ("C-x C-b" . ivy-switch-buffer)
           ;; ("C-c C-w" . ivy-wgrep-change-to-wgrep-mode)
           ("C-c v" . ivy-push-view)
           ("C-c V" . ivy-pop-view)))
+
+(use-package counsel-projectile
+  :config
+  :bind
+  ("C-c p s r" . counsel-projectile-rg)
+  ("C-c p s s" . counsel-projectile-ag))
 
 (use-package counsel
   :config
@@ -796,30 +1009,79 @@
 
 (use-package org
   :config
-  (setq org-log-done t)
+  ;; tasks in these files - where I capture and process my thoughts - will appear
+  ;; on my agenda
+  (setq org-agenda-files '("~/Documents/org-mode/gtd/inbox.org" ; where I collect everything
+                           "~/Documents/org-mode/gtd/projects.org" ; where I organize everything
+                           "~/Documents/org-mode/gtd/tickler.org")) ; things I wish to be reminded at the right moment
+
+  ;; here is my templates for capture everything
+  ;; full references: https://orgmode.org/manual/Capture-templates.html#Capture-templates
+  (setq org-capture-templates '(("t" "Todo" entry
+                                 (file+headline "~/Documents/org-mode/gtd/inbox.org" "Tasks")
+                                 "* TODO %i%? \n %U")
+                                ("r" "Daily Readings" entry
+                                 (file+headline "~/Documents/org-mode/gtd/inbox.org" "Daily Readings")
+                                 "** %i%?")
+                                ("m" "Maybe" entry
+                                 (file+headline "~/Documents/org-mode/gtd/inbox.org" "Maybe")
+                                 "* %i%? \n %U")
+                                ("k" "Tickler" entry
+                                 (file+headline "~/Documents/org-mode/gtd/inbox.org" "Tickler")
+                                 "* %i%? \n %U")
+                                ("b" "Goodread" entry
+                                 (file+headline "~/Documents/org-mode/gtd/books.org" "Goodread")
+                                 "* %i%? \n %U")
+                                ))
+
+  ;; places where I organize my tasks/thoughts/readings
+  (setq org-refile-targets '(("~/Documents/org-mode/gtd/projects.org" :maxlevel . 2)
+                             ("~/Documents/org-mode/gtd/maybe.org" :level . 1) ; things I might do at somepoine in the future, but don't want to see all the time
+                             ("~/Documents/org-mode/gtd/tickler.org" :maxlevel . 2) ; where I put my unplanned stuffs
+                             ("~/Dropbox/org-mode/daily-readings.org" :level . 1) ; where I put my daily readings
+                             ("~/Documents/org-mode/gtd/archive.org" :level . 1)
+                             ("~/Documents/org-mode/gtd/books.org" :level . 1) ; where I keep track of my book readings
+                             ))
+
+  (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+  (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
+  (setq org-agenda-skip-deadline-if-done t)
+  (setq org-agenda-skip-scheduled-if-done t)
+  (setq org-agenda-ndays 7)
+  (setq org-agenda-start-on-weekday nil)
+  (setq org-deadline-warning-days 14)
+  (setq org-reverse-note-order t)
+
+  ;; this is how I set priority and schedule my tasks
   (setq org-todo-keywords
-        '((sequence "TODO" "IN-PROGRESS" "CANCELED" "DONE")))
-  (setq org-agenda-files '("~/Dropbox/org-mode/"))
+        '((sequence "TODO(t)" "STARTED(s)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
+
+  ;; colorized keywords
+  (setq org-todo-keyword-faces
+        (quote (("TODO(t)" :foreground "red" :weight bold)
+                ("WAITING(w)" :foreground "brown" :weight bold)
+                ("WAITING(w)" :foreground "yellow" :weight bold)
+                ("DONE(d)" :foreground "green" :weight bold)
+                ("CANCELLED" :foreground "brown" :weight bold))))
+
+  ;; other setup
+  (setq org-log-done t)
   (setq org-return-follows-link t)
   (setq org-startup-with-inline-images t)
-  (setq org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
-  (setq org-blank-before-new-entry (quote ((heading) (plain-list-item))))
-  ;; org-babel
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((R . t)
-     (latex . t)
-     (emacs-lisp . t)
-     (gnuplot . t)
-     (plantuml . t)))
-  (setq org-src-tab-acts-natively t
-        org-src-fontify-natively t
-        org-confirm-babel-evaluate nil)
+  ;; (setq org-blank-before-new-entry (quote ((heading) (plain-list-item))))
+
+  ;; standard key bindings
   :bind (("\C-cl" . org-store-link)
+         ("<f9>" . org-agenda)
          ("\C-ca" . org-agenda)
          ("\C-cc" . org-capture)
-         ("\C-cb" . org-iswitchb)))
+         ("\C-cb" . org-switchb)
+         ("\C-c\C-b" . org-switchb)
+         )
 
+  )
+
+;; prettified bullets
 (use-package org-bullets
   :after org
   :config
@@ -897,7 +1159,7 @@ Try the repeated popping up to 10 times."
 
 (add-hook 'post-command-hook 'anchu/set-cursor)
 
-
+;; https://aqeel.cc/2017/01/08/emacs-company-mode/
 (defun check-expansion ()
   (save-excursion
     (if (looking-at "\\_>") t
@@ -950,15 +1212,15 @@ Try the repeated popping up to 10 times."
                   (interactive)
                   (ignore-errors (forward-line -5))))
 
-(global-set-key (kbd "C-S-f")
-                (lambda ()
-                  (interactive)
-                  (ignore-errors (forward-char 5))))
+;; (global-set-key (kbd "C-S-f")
+;;                 (lambda ()
+;;                   (interactive)
+;;                   (ignore-errors (forward-char 5))))
 
-(global-set-key (kbd "C-S-b")
-                (lambda ()
-                  (interactive)
-                  (ignore-errors (backward-char 5))))
+;; (global-set-key (kbd "C-S-b")
+;;                 (lambda ()
+;;                   (interactive)
+;;                   (ignore-errors (backward-char 5))))
 
 ;; https://gist.github.com/reiver-dev/82da77ba3f0008c56624661a7375e0e8#file-ligatures-el
 (defconst ligatures-hasklig-code-start #Xe100)
@@ -1003,6 +1265,7 @@ sequentially."
                                         ligatures-hasklig-code-start)
                                        prettify-symbols-alist)))
 
+;; (add-hook 'ess-mode-hook 'display-line-numbers-mode)
 (add-hook 'ess-mode-hook 'ligatures-hasklig-code-setup)
 (add-hook 'inferior-ess-mode-hook 'ligatures-hasklig-code-setup)
 (custom-set-variables
@@ -1011,10 +1274,11 @@ sequentially."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(olivetti dired+ ob crux dired uniquify zenburn-theme yaml-mode window-numbering which-key wgrep-ag use-package undo-tree solarized-theme smooth-scrolling smartparens rainbow-delimiters python-mode python powerline polymode paradox org-bullets nord-theme neotree multiple-cursors markdown-mode magit ledger-mode jedi ivy-historian inlineR imenu-anywhere iedit ibuffer-vc ibuffer-projectile hungry-delete helm-projectile gruvbox-theme goto-last-change fullframe expand-region eval-in-repl ess elpy electric-operator e2wm-R dumb-jump dired-subtree diminish dashboard counsel-projectile company-ycmd company-jedi color-theme-sanityinc-tomorrow anzu all-the-icons-ivy all-the-icons-dired aggressive-indent ag)))
+   (quote
+    (org all-the-icons counsel jupyter simple-httpd zmq clang-format modern-cpp-font-lock counsel-etags company-rtags ivy-rtags rtags company-irony irony xterm-color yasnippet-snippets company-c-headers htmlize ripgrep poly-R olivetti dired+ ob crux dired uniquify zenburn-theme yaml-mode window-numbering which-key wgrep-ag use-package undo-tree solarized-theme smooth-scrolling smartparens rainbow-delimiters python-mode python powerline polymode paradox org-bullets nord-theme neotree multiple-cursors markdown-mode magit ledger-mode jedi ivy-historian inlineR imenu-anywhere iedit ibuffer-vc ibuffer-projectile hungry-delete helm-projectile gruvbox-theme goto-last-change fullframe expand-region eval-in-repl ess elpy electric-operator e2wm-R dumb-jump dired-subtree diminish dashboard counsel-projectile company-ycmd company-jedi color-theme-sanityinc-tomorrow anzu all-the-icons-ivy all-the-icons-dired aggressive-indent ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(markdown-code-face ((t nil))))
