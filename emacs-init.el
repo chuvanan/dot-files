@@ -1,49 +1,52 @@
 ;; init.el --- AnChu's Emacs configuration
-;; Refactor on 02/06/2018
+;; Refactor on 08/11/2019
 
 ;; -----------------------------------------------------------------------------
 ;; Starting up
 ;; -----------------------------------------------------------------------------
 
-(require 'package)
-(package-initialize)
-(setq package-enable-at-startup nil)    ; to prevent accidentally loading packages twice
-
 (let ((minver "26.1"))
   (when (version< emacs-version minver)
     (error "This config requires Emacs v%s or higher" minver)))
 
-;; Add package sources
-(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/") t)
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
-;; I prioritize stable package releases
-(setq package-archive-priorities '(("melpa-stable" . 10)
-                                   ("gnu-elpa"     . 5)
-                                   ("melpa"        . 0)))
-(unless package-archive-contents
-  (package-refresh-contents))
+;; Add package sources
+;; (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+;; (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/") t)
+;; (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+
+;; ;; I prioritize stable package releases
+;; (setq package-archive-priorities '(("melpa-stable" . 10)
+;;                                    ("gnu-elpa"     . 5)
+;;                                    ("melpa"        . 0)))
+;; (unless package-archive-contents
+;;   (package-refresh-contents))
 
 ;; Set up my package directory
-(setq package-user-dir
-      (expand-file-name "elpa" user-emacs-directory))
+;; (setq package-user-dir
+;;       (expand-file-name "elpa" user-emacs-directory))
 
 ;; Personal information
 (setq user-full-name "An Chu"
       user-mail-address "chuvanan.cva@gmail.com")
 
-;; Install and configure use-package
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
-
-(eval-when-compile
-  (require 'use-package))
-(setq use-package-verbose t)
-(setq use-package-always-ensure t)
-(use-package diminish)                  ; to enable :diminish
-(use-package bind-key)                  ; to enable :bind
-;; (setq load-prefer-newer t)              ; always load newest byte code
+(straight-use-package 'use-package)
+(setq straight-use-package-by-default t) ; no need to refactor use-package configuration
+(straight-use-package 'diminish)                  ; to enable :diminish
+(straight-use-package 'bind-key)                  ; to enable :bind
+(diminish 'eldoc-mode)
 
 ;; -----------------------------------------------------------------------------
 ;; General configuration
@@ -85,13 +88,16 @@
 (setq line-move-visual t)
 
 (setq scroll-step 1
-      scroll-margin 5
       hscroll-step 1
-      hscroll-margin 3
-      scroll-conservatively  10000)     ; when point moves offscreen, don't jump to recenter it
+      hscroll-margin 3)
+
+(setq scroll-preserve-screen-position t
+      scroll-conservatively 10000
+      maximum-scroll-margin 0.5
+      scroll-margin 99999)
 
 (set-face-attribute 'vertical-border nil :foreground (face-attribute 'fringe :background))
-(set-fringe-mode '(4 . 0))
+(set-fringe-mode '(0 . 0))
 (put 'narrow-to-region 'disabled nil)
 
 (setq-default fill-column 80)
@@ -217,11 +223,6 @@
                                          try-complete-lisp-symbol))
 (global-set-key (kbd "M-/") #'hippie-expand)
 
-;; vc-diff shortcut
-(global-set-key (kbd "<f10>") 'vc-diff)
-
-;; turn off eldoc globally
-;; (global-eldoc-mode -1)
 
 ;; -----------------------------------------------------------------------------
 ;; use-package packages
@@ -261,47 +262,15 @@
   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
   (global-set-key (kbd "C-c C->") 'mc/mark-all-like-this))
 
-;; https://github.com/joaotavora/yasnippet
-;; (use-package yasnippet
-;;   :diminish yas-minor-mode
-;;   :init
-;;   :config
-;;   (yas-reload-all)
-;;   (add-hook 'ess-mode-hook #'yas-minor-mode)
-;;   (setq yas-snippet-dirs (format "%s%s" user-emacs-directory "snippets"))
-;;   (define-key yas-minor-mode-map (kbd "<tab>") nil)
-;;   (define-key yas-minor-mode-map (kbd "TAB") nil)
-;;   (define-key yas-minor-mode-map (kbd "<backtab>") 'yas-expand))
-
 (use-package yasnippet
+  :diminish yas-minor-mode
   :init
-  ;; It will test whether it can expand, if yes, change cursor color}
-  ;; (defun yasnippet-can-fire-p (&optional field)
-  ;;   (interactive)
-  ;;   (setq yas--condition-cache-timestamp (current-time))
-  ;;   (let (templates-and-pos)
-  ;;     (unless (and yas-expand-only-for-last-commands
-  ;;                  (not (member last-command yas-expand-only-for-last-commands)))
-  ;;       (setq templates-and-pos (if field
-  ;;                                   (save-restriction
-  ;;                                     (narrow-to-region (yas--field-start field)
-  ;;                                                       (yas--field-end field))
-  ;;                                     (yas--templates-for-key-at-point))
-  ;;                                 (yas--templates-for-key-at-point))))
-
-  ;;     (set-cursor-color (if (and templates-and-pos (first templates-and-pos))
-  ;;                           "#d65d0e" (face-attribute 'default :foreground)))))
-  ;; (add-hook 'post-command-hook 'yasnippet-can-fire-p)
-
   (yas-global-mode 1)
-
   :config
   (setq yas-fallback-behavior 'call-other-command)
-
   (setq yas-snippet-dirs-custom (format "%s/%s" user-emacs-directory "snippets/"))
   (add-to-list' yas-snippet-dirs 'yas-snippet-dirs-custom)
   (yas-reload-all)
-
   :bind*
   (("<C-tab>" . yas-insert-snippet)
    :map yas-minor-mode-map
@@ -309,9 +278,8 @@
   )
 
 ;; https://polymode.github.io/installation/
-(use-package poly-markdown
-  :ensure t
-  :pin melpa-stable)
+(straight-use-package 'poly-markdown)
+(straight-use-package 'poly-R)
 
 ;; https://github.com/vspinu/polymode
 (use-package polymode
@@ -326,25 +294,17 @@
 	     poly-r+c++-mode
 	     poly-c++r-mode)
   :init
-  (require 'poly-R)
   (require 'poly-markdown)
   :config
   (add-to-list 'auto-mode-alist '("\\.md$" . poly-markdown-mode))
   (add-to-list 'auto-mode-alist '("\\.Rmd$" . poly-markdown+r-mode))
+  (add-to-list 'auto-mode-alist '("\\.rmd$" . poly-markdown+r-mode))
   (add-to-list 'auto-mode-alist '("\\.Rcpp$" . poly-r+c++-mode))
   (add-to-list 'auto-mode-alist '("\\.cppR$" . poly-c++r-mode))
   )
 
 ;; https://github.com/Fanael/rainbow-delimiters
 (use-package rainbow-delimiters)
-
-;; https://github.com/syohex/emacs-anzu
-;; (use-package anzu
-;;   :diminish anzu-mode
-;;   :config
-;;   (global-anzu-mode t)
-;;   (global-set-key [remap query-replace-regexp] 'anzu-query-replace-regexp)
-;;   (global-set-key [remap query-replace] 'anzu-query-replace))
 
 ;; https://github.com/nflath/hungry-delete
 (use-package hungry-delete
@@ -360,7 +320,8 @@
          ("\\.markdown\\'" . markdown-mode))
   :init (setq markdown-command "multimarkdown")
   :config
-  (define-key markdown-mode-map "\M-p" 'fill-paragraph))
+  (define-key markdown-mode-map "\M-p" 'fill-paragraph)
+  :bind (("<C-return>" . markdown-follow-thing-at-point)))
 
 ;; https://github.com/abo-abo/avy
 (use-package avy
@@ -390,7 +351,7 @@
 
 ;; https://github.com/Malabarba/aggressive-indent-mode
 (use-package aggressive-indent
-  :ensure t
+  ;; :ensure t
   :config
   (add-hook 'ess-mode-hook #'aggressive-indent-mode)
   (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode))
@@ -433,9 +394,8 @@
 (use-package dashboard
   :config
   (dashboard-setup-startup-hook)
-  (setq dashboard-startup-banner "~/.emacs.d/mo.png")
-  (setq dashboard-center-content t)
-  (setq dashboard-set-heading-icons t)
+  (setq dashboard-startup-banner 'official)
+  (setq dashboard-center-content nil)
   (setq dashboard-set-navigator nil)
   (setq dashboard-set-footer nil)
   (setq dashboard-items '((recents  . 5)
@@ -449,8 +409,18 @@
   (add-hook 'ess-mode-hook #'electric-operator-mode)
   (add-hook 'inferior-ess-mode-hook #'electric-operator-mode)
   (add-hook 'c++-mode-hook #'electric-operator-mode)
+  (add-hook 'fortran-mode-hook #'electric-operator-mode)
   ;; (add-hook 'python-mode-hook #'electric-operator-mode)
   (electric-operator-add-rules-for-mode 'c++-mode
+                                        (cons "," ", ")
+                                        (cons "=" " = ")
+                                        (cons "!=" " != ")
+                                        (cons "<=" " <= ")
+                                        (cons ">=" " >= ")
+                                        (cons ">" " > ")
+                                        (cons "<" " < ")
+                                        (cons ";" "; "))
+  (electric-operator-add-rules-for-mode 'fortran-mode
                                         (cons "," ", ")
                                         (cons "=" " = ")
                                         (cons "!=" " != ")
@@ -493,25 +463,6 @@
   (setq ag-highlight-search t)
   ;; Set ag to reuse the same buffer
   (setq ag-reuse-buffers nil))
-
-;; (use-package company
-;;   :diminish company-mode
-;;   :ensure t
-;;   :config
-;;   (global-company-mode t)
-;;   (setq company-idle-delay 0)
-;;   (setq company-echo-delay 0)
-;;   (setq company-begin-commands '(self-insert-command))
-;;   (setq company-minimum-prefix-length 3)
-;;   (setq-local company-backends
-;;               (append '(company-R-objects)
-;;                       company-backends))
-;;   :bind (:map company-active-map
-;;               ([tab] . company-complete-selection)
-;;               ("TAB" . company-complete-selection)
-;;               ("C-n" . company-select-next)
-;;               ("C-p" . company-select-previous)))
-
 
 ;; https://github.com/company-mode/company-mode
 (use-package company
@@ -590,8 +541,8 @@
   (setq powerline-arrow-shape 'arrow14))
 
 ;; https://github.com/Fuco1/smartparens
-(use-package smartparens-config
-  :ensure smartparens
+(use-package smartparens
+  :diminish smartparens-mode
   :config
   (add-hook 'ess-mode-hook #'smartparens-mode)
   (add-hook 'inferior-ess-mode-hook #'smartparens-mode)
@@ -619,6 +570,40 @@
 (setq-default c-basic-offset 4 c-default-style "linux")
 
 ;; -----------------------------------------------------------------------------
+;; Fortran
+;; -----------------------------------------------------------------------------
+
+(use-package fortran
+  :defer t
+  :config
+
+  ;; Fortran settings
+  (setq fortran-continuation-string "&")
+  (setq fortran-do-indent 2)
+  (setq fortran-if-indent 2)
+  (setq fortran-structure-indent 2)
+
+  ;; Fortran 90 settings
+  (setq f90-do-indent 2)
+  (setq f90-if-indent 2)
+  (setq f90-type-indent 2)
+  (setq f90-program-indent 2)
+  (setq f90-continuation-indent 4)
+  (setq f90-smart-end 'blink)
+
+  ;; Set Fortran and Fortran 90 mode for appropriate extensions
+  (setq auto-mode-alist
+        (cons '("\\.F90$" . f90-mode) auto-mode-alist))
+  (setq auto-mode-alist
+        (cons '("\\.pf$" . f90-mode) auto-mode-alist))
+  (setq auto-mode-alist
+        (cons '("\\.fpp$" . f90-mode) auto-mode-alist))
+  (setq auto-mode-alist
+        (cons '("\\.F$" . fortran-mode) auto-mode-alist))
+  )
+
+
+;; -----------------------------------------------------------------------------
 ;; ESS
 ;; -----------------------------------------------------------------------------
 
@@ -627,7 +612,7 @@
 (use-package ess
   :defer t
   :init
-  ;; (require 'ess-r-mode)
+  (require 'ess-r-mode)
   ;; (require 'ess-site)
   ;; (require 'ess-rutils)
   ;; Auto set width and length options when initiate new Ess processes
@@ -669,7 +654,7 @@
   (setq ess-eldoc-abbreviation-style 'mild)
   (setq ess-use-eldoc nil)
   (setq comint-scroll-to-bottom-on-output t)
-  :bind (:map ess-mode-map
+  :bind (:map ess-r-mode-map
               ("C-c C-w w" . ess-r-package-use-dir)
               ("C-c C-w C-w" . ess-r-package-use-dir)
               ("<C-return>" . ess-eval-region-or-function-or-paragraph-and-step)
@@ -714,6 +699,8 @@
         (ess-fl-keyword:=)
         (ess-R-fl-keyword:F&T))))
 
+(define-key polymode-mode-map (kbd "<f10>") 'polymode-eval-map)
+
 ;; http://www.emacswiki.org/emacs/ess-edit.el
 (defun ess-edit-word-at-point ()
   (save-excursion
@@ -727,7 +714,7 @@
     (ess-eval-linewise (concat x)))
   )
 ;; key binding
-(define-key ess-mode-map (kbd "<S-return>") 'ess-eval-word)
+(define-key ess-r-mode-map (kbd "<S-return>") 'ess-eval-word)
 
 ;; %>% operator
 (defun anchu/isnet_then_R_operator ()
@@ -737,8 +724,8 @@
   (insert "%>%")
   (reindent-then-newline-and-indent))
 
-(define-key ess-mode-map (kbd "C-S-m") 'anchu/isnet_then_R_operator)
-(define-key inferior-ess-mode-map (kbd "C-S-m") 'anchu/isnet_then_R_operator)
+(define-key ess-r-mode-map (kbd "C-S-m") 'anchu/isnet_then_R_operator)
+(define-key inferior-ess-r-mode-map (kbd "C-S-m") 'anchu/isnet_then_R_operator)
 
 ;; ->. operator
 
@@ -749,8 +736,8 @@
   (insert "->.;")
   (reindent-then-newline-and-indent))
 
-(define-key ess-mode-map (kbd "C-:") 'anchu/insert_bizarro_pipe_operator)
-(define-key inferior-ess-mode-map (kbd "C-:") 'anchu/insert_bizarro_pipe_operator)
+(define-key ess-r-mode-map (kbd "C-:") 'anchu/insert_bizarro_pipe_operator)
+(define-key inferior-ess-r-mode-map (kbd "C-:") 'anchu/insert_bizarro_pipe_operator)
 
 ;; %in% operator
 (defun anchu/insert_in_operator ()
@@ -760,8 +747,8 @@
   (insert "%in%")
   (just-one-space 1))
 
-(define-key ess-mode-map (kbd "C-S-i") 'anchu/insert_in_operator)
-(define-key inferior-ess-mode-map (kbd "C-S-i") 'anchu/insert_in_operator)
+(define-key ess-r-mode-map (kbd "C-S-i") 'anchu/insert_in_operator)
+(define-key inferior-ess-r-mode-map (kbd "C-S-i") 'anchu/insert_in_operator)
 
 ;; <<- operator
 (defun anchu/insert_double_assign_operator ()
@@ -771,8 +758,8 @@
   (insert "<<-")
   (just-one-space 1))
 
-(define-key ess-mode-map (kbd "C-M-=") 'anchu/insert_double_assign_operator)
-(define-key inferior-ess-mode-map (kbd "C-M-=") 'anchu/insert_double_assign_operator)
+(define-key ess-r-mode-map (kbd "C-M-=") 'anchu/insert_double_assign_operator)
+(define-key inferior-ess-r-mode-map (kbd "C-M-=") 'anchu/insert_double_assign_operator)
 
 ;; -> operator
 (defun anchu/insert_right_assign_operator ()
@@ -782,8 +769,8 @@
   (insert "->")
   (just-one-space 1))
 
-(define-key ess-mode-map (kbd "C-M--") 'anchu/insert_right_assign_operator)
-(define-key inferior-ess-mode-map (kbd "C-M--") 'anchu/insert_right_assign_operator)
+(define-key ess-r-mode-map (kbd "C-M--") 'anchu/insert_right_assign_operator)
+(define-key inferior-ess-r-mode-map (kbd "C-M--") 'anchu/insert_right_assign_operator)
 
 (defun anchu/ess-rmarkdown ()
   "Compile R markdown (.Rmd). Should work for any output type."
@@ -866,7 +853,7 @@
   (insert "## -----------------------------------------------------------------------------\n")
   (insert "## "))
 
-(define-key ess-mode-map (kbd "C-c C-a n") 'anchu/insert-minor-section)
+(define-key ess-r-mode-map (kbd "C-c C-a n") 'anchu/insert-minor-section)
 
 (defun anchu/insert-r-code-chunk ()
   "Insert R Markdown code chunk."
@@ -889,7 +876,7 @@
     (insert "\n")
     (insert "## -----------------------------------------------------------------------------\n")))
 
-(define-key ess-mode-map (kbd "C-c C-a m") 'anchu/insert-major-section)
+(define-key ess-r-mode-map (kbd "C-c C-a m") 'anchu/insert-major-section)
 
 (defun anchu/insert-resource-header ()
   "Insert yaml-like header for R script resources."
@@ -903,7 +890,7 @@
     (insert (concat "## date: " (current-time-string) "\n"))
     (insert "## -----------------------------------------------------------------------------\n")))
 
-(define-key ess-mode-map (kbd "C-c C-a r") 'anchu/insert-resource-header)
+(define-key ess-r-mode-map (kbd "C-c C-a r") 'anchu/insert-resource-header)
 
 (defun anchu/insert-yalm-header ()
   "Insert Rmd header."
@@ -937,7 +924,7 @@
     )
   )
 
-(define-key ess-mode-map (kbd "C-c C-a d") 'anchu/insert-named-comment)
+(define-key ess-r-mode-map (kbd "C-c C-a d") 'anchu/insert-named-comment)
 
 ;; -----------------------------------------------------------------------------
 ;; Ivy
@@ -1002,6 +989,17 @@
     (ivy-read "directories:" collection :action 'dired)))
 
 (global-set-key (kbd "C-x C-d") 'counsel-goto-recent-directory)
+
+
+;; -----------------------------------------------------------------------------
+;; prescient.el
+;; -----------------------------------------------------------------------------
+
+(straight-use-package 'prescient)
+(straight-use-package 'ivy-prescient)
+(ivy-prescient-mode)
+(straight-use-package 'company-prescient)
+(company-prescient-mode)
 
 ;; -----------------------------------------------------------------------------
 ;; org-mode
@@ -1281,4 +1279,5 @@ sequentially."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(markdown-code-face ((t nil))))
+ '(markdown-code-face ((t (:inherit fixed-pitch :background "#2d2d2d" :foreground "#cc99cc" :weight semi-bold :family "hasklig"))))
+ '(markdown-language-info-face ((t (:inherit markdown-language-keyword-face)))))
