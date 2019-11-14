@@ -81,6 +81,9 @@
 ;; Reverts any buffer associated with a file when the file changes on disk
 (global-auto-revert-mode t)
 
+;; save last editied position
+(save-place-mode 1)
+
 ;; UX
 (global-hl-line-mode +1)
 ;; (global-visual-line-mode)
