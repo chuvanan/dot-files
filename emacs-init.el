@@ -499,6 +499,25 @@
               ("C-n" . company-select-next)
               ("C-p" . company-select-previous)))
 
+(straight-use-package 'company-lsp)
+(use-package company-lsp
+  :requires company
+  :config
+  (push 'company-lsp company-backends)
+  ;; Disable client-side cache because the LSP server does a better job.
+  (setq company-transformers nil
+        company-lsp-async t
+        company-lsp-cache-candidates nil))
+
+;; lsp-mode for bash
+(straight-use-package 'lsp-mode)
+(use-package lsp-mode
+  :commands lsp
+  :hook
+  (sh-mode . lsp)
+  (c++-mode . lsp)
+  )
+
 ;; C/C++ development
 (use-package irony
   :config
