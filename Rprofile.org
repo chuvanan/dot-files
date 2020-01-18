@@ -69,9 +69,14 @@ options(useFancyQuotes = FALSE)
 
 Sys.setenv("_R_CHECK_LENGTH_1_CONDITION_" = "verbose")
 Sys.setenv("_R_CHECK_LENGTH_1_LOGIC2_" = "verbose")
+Sys.setenv("_R_CHECK_TESTS_NLINES_" = 0)
+
+## export pipe operator to global namespace
+## `%>%` <- magrittr::`%>%`
+## .First <- function() cat("\n   `%>%` exported to .GlobalEnv!\n\n")
 
 ## managing search path conflicts (from R-3.6.0)
 ## options(conflicts.policy = "strict")
 
-options(browser = "/usr/bin/google-chrome-stable")
+options(browser = "/usr/bin/brave-browser")
 #+END_SRC
