@@ -2,7 +2,7 @@
 
 This guide is meant for users of Unix and Unix-like systems.
 
-- First download the Emacs sources from this [[http://mirror.freedif.org/GNU/emacs/][repo]]
+- First download the Emacs sources from this [[http://mirror.freedif.org/GNU/emacs/][repo]] or [[https://git.savannah.gnu.org/cgit/emacs.git][daily builds]]
 
 #+BEGIN_SRC bash
 wget http://mirror.freedif.org/GNU/emacs/emacs-26.1.tar.gz
