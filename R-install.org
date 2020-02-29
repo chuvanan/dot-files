@@ -60,5 +60,9 @@ setHook(packageEvent("grDevices", "onLoad"),
 options(device = 'x11')
 #+END_SRC
 
-P/S: I've updated the build configuration with the removal of *--with-lapack* as
+PS: I've updated the build configuration with the removal of *--with-lapack* as
 it is strongly advised by the official R [[https://cran.r-project.org/doc/manuals/r-release/R-admin.html#LAPACK][documentation]].
+
+PPS: It happens quite often to me that my machine will lack some sort of =.sty=
+file for compiling =.Rnw=. A quick fix is to download the missing file from the
+internet and put it into `share/texmf/tex/latex/`.
