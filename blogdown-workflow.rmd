@@ -1,0 +1,27 @@
+---
+output: rmarkdown::github_document
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, comment = "#>", eval = FALSE)
+```
+
+
+### Recipe for writing a new post
+
+* Start up an R session in your website directory, and use
+  `blogdown::new_post()` to generate an RMarkdown file for your post (you're not
+  recommended to do it yourself).
+
+```{r}
+blogdown::new_post(
+              title = "A recipe for writing a new post",
+              ext = ".rmd"
+          )
+```
+
+* To preview your website, run this:
+
+```{r}
+blogdown::serve_site()
+```
