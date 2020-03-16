@@ -79,4 +79,5 @@ Sys.setenv("_R_CHECK_TESTS_NLINES_" = 0)
 ## options(conflicts.policy = "strict")
 
 options(browser = "/usr/bin/brave-browser")
+tryCatch(startup::startup(), error = function(ex) message(".Rprofile error: ", conditionMessage(ex)))
 #+END_SRC
