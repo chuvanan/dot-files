@@ -1,5 +1,5 @@
 ;; init.el --- AnChu's Emacs configuration
-;; Refactor on 08/11/2019
+;; Updated on 2020-05-09
 
 ;; -----------------------------------------------------------------------------
 ;; Starting up
@@ -53,6 +53,8 @@
 ;; -----------------------------------------------------------------------------
 
 
+
+
 ;; Reduce the frequency of garbage collection by making it happen on
 ;; each 50MB of allocated data (the default is on every 0.76MB)
 (setq gc-cons-threshold 50000000)
@@ -65,13 +67,14 @@
 (setq delete-old-versions t)            ; delete excess backup versions silently.
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
 
+
 ;; Disabled confused commands
 (unbind-key "C-x C-z")                  ; suspend-frame
 (unbind-key "C-x m")			; compose-mail
 
 ;; Font for source code
 (when (member "Hasklig" (font-family-list))
-  (set-frame-font "Hasklig-11:weight=semibold" nil t))
+  (set-frame-font "Hasklig-9:weight=semibold" nil t))
 
 ;; Space is expensive. So remove unnecessary GUI element
 (tool-bar-mode -1)
@@ -151,6 +154,7 @@
 
 ;; Delete trailing whitespace
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
+(setq auto-save-timeout 30)
 
 ;; Truncate longline as default
 (set-default 'truncate-lines t)
@@ -342,9 +346,14 @@
   (window-numbering-mode 1))
 
 ;; https://github.com/purcell/color-theme-sanityinc-tomorrow
-(use-package color-theme-sanityinc-tomorrow
+;; (use-package color-theme-sanityinc-tomorrow
+;;   :config
+;;   (load-theme 'sanityinc-tomorrow-night t))
+
+(use-package base16-theme
+  :ensure t
   :config
-  (load-theme 'sanityinc-tomorrow-eighties t))
+  (load-theme 'base16-tomorrow-night-eighties t))
 
 ;; https://github.com/magnars/expand-region.el
 (use-package expand-region
@@ -467,6 +476,11 @@
   ;; Set ag to reuse the same buffer
   (setq ag-reuse-buffers nil))
 
+;; https://github.com/dajva/rg.el
+(use-package rg
+  :defer t
+  :init)
+
 ;; https://github.com/company-mode/company-mode
 (use-package company
   :diminish company-mode
@@ -480,6 +494,7 @@
   (setq company-begin-commands '(self-insert-command))
   (setq company-dabbrev-downcase 0)
   (setq company-dabbrev-code-everywhere t)
+  (setq company-minimum-prefix-length 1)
   (setq company-dabbrev-code-ignore-case nil)
   (setq company-dabbrev-ignore-case nil)
   (setq company-selection-wrap-around t
@@ -519,26 +534,26 @@
   )
 
 ;; C/C++ development
-(use-package irony
-  :config
-  (progn
-    ;; If irony server was never installed, install it.
-    (unless (irony--find-server-executable) (call-interactively #'irony-install-server))
+;; (use-package irony
+;;   :config
+;;   (progn
+;;     ;; If irony server was never installed, install it.
+;;     (unless (irony--find-server-executable) (call-interactively #'irony-install-server))
 
-    (add-hook 'c++-mode-hook 'irony-mode)
-    (add-hook 'c-mode-hook 'irony-mode)
+;;     (add-hook 'c++-mode-hook 'irony-mode)
+;;     (add-hook 'c-mode-hook 'irony-mode)
 
-    ;; Use compilation database first, clang_complete as fallback.
-    (setq-default irony-cdb-compilation-databases '(irony-cdb-libclang
-                                                    irony-cdb-clang-complete))
+;;     ;; Use compilation database first, clang_complete as fallback.
+;;     (setq-default irony-cdb-compilation-databases '(irony-cdb-libclang
+;;                                                     irony-cdb-clang-complete))
 
-    (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-    )
-  )
+;;     (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+;;     )
+;;   )
 
-(add-hook 'c++-mode-hook (lambda () (setq comment-start "/* "
-                                          comment-end   " */"
-                                          comment-style 'aligned)))
+;; (add-hook 'c++-mode-hook (lambda () (setq comment-start "/* "
+;;                                           comment-end   " */"
+;;                                           comment-style 'aligned)))
 
 ;; clang-format can be triggered using C-c C-f
 ;; Create clang-format file using google style
@@ -624,6 +639,106 @@
         (cons '("\\.F$" . fortran-mode) auto-mode-alist))
   )
 
+;; -----------------------------------------------------------------------------
+;; bash lsp
+;; -----------------------------------------------------------------------------
+
+(use-package lsp-mode
+  :commands lsp
+  :hook
+  (sh-mode . lsp))
+
+
+;; -----------------------------------------------------------------------------
+;; roam
+;; -----------------------------------------------------------------------------
+
+;; (straight-use-package
+;;  '(org-roam :type git :host github :repo "jethrokuan/org-roam"))
+;; (require 'org-roam)
+;; (setq org-roam-directory "~/Documents/roam/")
+;; (define-key org-roam-mode-map (kbd "C-c n l") #'org-roam)
+;; (define-key org-roam-mode-map (kbd "C-c n f") #'org-roam-find-file)
+;; (define-key org-roam-mode-map (kbd "C-c n b") #'org-roam-switch-to-buffer)
+;; (define-key org-roam-mode-map (kbd "C-c n g") #'org-roam-graph-show)
+;; (define-key org-mode-map (kbd "C-c n i") #'org-roam-insert)
+;; (setq org-roam-link-title-format "[R:%s]")
+;; (setq org-roam-completion-system 'ivy)
+;; (setq org-roam-graph-executable "/usr/bin/neato")
+;; (setq org-roam-graph-extra-config '(("overlap" . "false")))
+;; (setq org-roam-graph-viewer "/usr/bin/brave-browser")
+;; (org-roam-mode +1)
+
+
+
+;; -----------------------------------------------------------------------------
+;; org-journal
+;; -----------------------------------------------------------------------------
+
+
+;; (use-package org-journal
+;;   :bind
+;;   ("C-c n j" . org-journal-new-entry)
+;;   :custom
+;;   (org-journal-date-prefix "#+TITLE: ")
+;;   (org-journal-file-format "%Y-%m-%d.org")
+;;   (org-journal-dir "~/Documents/roam/")
+;;   (org-journal-date-format "%A, %d %B %Y"))
+
+;; -----------------------------------------------------------------------------
+;; rg
+
+(require 'rg)
+(rg-enable-default-bindings)
+
+;; -----------------------------------------------------------------------------
+;;
+;; -----------------------------------------------------------------------------
+
+(use-package el-patch
+  :straight (:host github
+                   :repo "raxod502/el-patch"
+                   :branch "develop"))
+
+(eval-when-compile
+  (require 'el-patch))
+
+(use-package deft
+  ;; same as above...
+  :config/el-patch
+  (defun deft-parse-title (file contents)
+    "Parse the given FILE and CONTENTS and determine the title.
+If `deft-use-filename-as-title' is nil, the title is taken to
+be the first non-empty line of the FILE.  Else the base name of the FILE is
+used as title."
+    (el-patch-swap (if deft-use-filename-as-title
+                       (deft-base-filename file)
+                     (let ((begin (string-match "^.+$" contents)))
+                       (if begin
+                           (funcall deft-parse-title-function
+                                    (substring contents begin (match-end 0))))))
+                   (org-roam--get-title-or-slug file))))
+
+;; -----------------------------------------------------------------------------
+;; deft
+;; -----------------------------------------------------------------------------
+
+(use-package deft
+  :after org
+  :bind
+  ("C-c n d" . deft)
+  ("<f8>" . deft)
+  :custom
+  (deft-recursive t)
+  (deft-use-filter-string-for-filename t)
+  (deft-default-extension "org")
+  (deft-directory "~/Documents/roam/"))
+
+;; -----------------------------------------------------------------------------
+;; Ocaml
+;; -----------------------------------------------------------------------------
+
+(straight-use-package 'tuareg)
 
 ;; -----------------------------------------------------------------------------
 ;; ESS
@@ -649,7 +764,14 @@
   (add-hook 'inferior-ess-mode-hook #'(lambda ()
                                         (setq-local comint-use-prompt-regexp nil)
                                         (setq-local inhibit-field-text-motion nil)))
+  (add-hook 'ess-r-mode-hook
+            (lambda()
+              'eglot-ensure
+              (make-local-variable 'company-backends)
+              (delete-dups (push 'company-capf company-backends))
+              (delete-dups (push 'company-files company-backends))))
   (add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
+  (setq ess-eval-empty t)               ; don't skip non-code line
   (setq comint-scroll-to-bottom-on-input 'this)
   (setq comint-move-point-for-output 'others)
   (setq ess-ask-for-ess-directory nil)
@@ -659,6 +781,8 @@
   (setq ess-roxy-fold-examples nil)
   (setq ess-roxy-fontify-examples t)
   (setq ess-use-company 'script-only)
+  (setq ess-company-arg-prefix-length 1)
+  (setq ess-blink-region nil)
 
   (setq ess-r-flymake-lintr-cache nil)
   (setq ess-history-directory "~/.R/")
@@ -670,6 +794,7 @@
   ;; fix assignment key
   (ess-toggle-underscore nil)
   (setq ess-insert-assign (car ess-assign-list))
+  (setq ess-assign-list '(" = "))
   (bind-key "M--" 'ess-insert-assign)
 
   (setq ess-eldoc-show-on-symbol nil)
@@ -679,12 +804,12 @@
   :bind (:map ess-r-mode-map
               ("C-c C-w w" . ess-r-package-use-dir)
               ("C-c C-w C-w" . ess-r-package-use-dir)
-              ("<C-return>" . ess-eval-region-or-function-or-paragraph-and-step)
+              ("<C-M-return>" . ess-eval-region-or-function-or-paragraph-and-step)
               ("<C-S-return>" . ess-eval-buffer)
               ("C-M-;" . comment-line)
               ("C-S-<f10>" . inferior-ess-reload)
               ("<f5>" . ess-display-help-on-object)
-              ("<C-M-return>" . ess-eval-region-or-function-or-paragraph))
+              ("<C-return>" . ess-eval-region-or-function-or-paragraph))
   :bind (:map inferior-ess-mode-map
               ("C-S-<f10>" . inferior-ess-reload)))
 
@@ -693,6 +818,7 @@
       (quote
        ((ess-R-fl-keyword:modifiers . t)
         (ess-R-fl-keyword:fun-defs . t)
+        (ess-R-fl-keyword:fun-defs2 . t)
         (ess-R-fl-keyword:keywords . t)
         (ess-R-fl-keyword:assign-ops)
         (ess-R-fl-keyword:constants . t)
@@ -701,6 +827,7 @@
         (ess-fl-keyword:operators)
         (ess-fl-keyword:delimiters)
         (ess-fl-keyword:=)
+        (ess-fl-keyword::= . t)
         (ess-R-fl-keyword:F&T)
         (ess-R-fl-keyword:%op%))))
 
@@ -710,6 +837,7 @@
         (ess-R-fl-keyword:messages . t)
         (ess-R-fl-keyword:modifiers . t)
         (ess-R-fl-keyword:fun-defs . t)
+        (ess-R-fl-keyword:fun-defs2 . t)
         (ess-R-fl-keyword:keywords . t)
         (ess-R-fl-keyword:assign-ops)
         (ess-R-fl-keyword:constants . t)
@@ -719,6 +847,7 @@
         (ess-fl-keyword:operators)
         (ess-fl-keyword:delimiters)
         (ess-fl-keyword:=)
+        (ess-fl-keyword::= . t)
         (ess-R-fl-keyword:F&T))))
 
 (define-key polymode-mode-map (kbd "<f10>") 'polymode-eval-map)
@@ -737,6 +866,10 @@
   )
 ;; key binding
 (define-key ess-r-mode-map (kbd "<S-return>") 'ess-eval-word)
+(define-key ess-r-mode-map (kbd "C-'") 'ess-eval-line)
+(define-key ess-r-mode-map (kbd "<C-return>") 'ess-eval-region-or-function-or-paragraph)
+(define-key ess-r-mode-map (kbd "<M-return>") 'ess-eval-line)
+(define-key ess-r-mode-map (kbd "C-;") 'ess-eval-line-and-step)
 
 ;; %>% operator
 (defun anchu/isnet_then_R_operator ()
@@ -957,7 +1090,8 @@
   :config
   (ivy-mode 1)
   (setq ivy-use-virtual-buffers t)
-  (setq enable-recursive-minibuffers t)
+  (setq enable-recursive-minibuffers nil)
+  (setq ivy-use-selectable-prompt t)
   (setq ivy-initial-inputs-alist nil)
   (setq ivy-count-format "%d/%d ")
   (setq ivy-re-builders-alist
@@ -1242,6 +1376,8 @@ Try the repeated popping up to 10 times."
 ;;                   (interactive)
 ;;                   (ignore-errors (backward-char 5))))
 
+(global-prettify-symbols-mode +1)
+
 ;; https://gist.github.com/reiver-dev/82da77ba3f0008c56624661a7375e0e8#file-ligatures-el
 (defconst ligatures-hasklig-code-start #Xe100)
 
@@ -1285,17 +1421,60 @@ sequentially."
                                         ligatures-hasklig-code-start)
                                        prettify-symbols-alist)))
 
-;; (add-hook 'ess-mode-hook 'display-line-numbers-mode)
 (add-hook 'ess-mode-hook 'ligatures-hasklig-code-setup)
 (add-hook 'inferior-ess-mode-hook 'ligatures-hasklig-code-setup)
+;; (global-prettify-symbols-mode +1)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default bold shadow italic underline bold bold-italic bold])
+ '(ansi-color-names-vector
+   ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCCC"])
+ '(ansi-term-color-vector
+   [unspecified "#181818" "#ab4642" "#a1b56c" "#f7ca88" "#7cafc2" "#ba8baf" "#7cafc2" "#d8d8d8"])
+ '(beacon-color "#cc6666")
+ '(company-quickhelp-color-background "#4F4F4F")
+ '(company-quickhelp-color-foreground "#DCDCCC")
+ ;; '(custom-enabled-themes (quote (sanityinc-solarized-dark)))
+ '(custom-safe-themes
+   (quote
+    ("9be1d34d961a40d94ef94d0d08a364c3d27201f3c98c9d38e36f10588469ea57" "dd4628d6c2d1f84ad7908c859797b24cc6239dfe7d71b3363ccdd2b88963f336" "36282815a2eaab9ba67d7653cf23b1a4e230e4907c7f110eebf3cdf1445d8370" "a62f0662e6aa7b05d0b4493a8e245ab31492765561b08192df61c9d1c7e1ddee" "0961d780bd14561c505986166d167606239af3e2c3117265c9377e9b8204bf96" "760ce657e710a77bcf6df51d97e51aae2ee7db1fba21bbad07aab0fa0f42f834" "bc4c89a7b91cfbd3e28b2a8e9e6750079a985237b960384f158515d32c7f0490" "8be07a2c1b3a7300860c7a65c0ad148be6d127671be04d3d2120f1ac541ac103" "7bef2d39bac784626f1635bd83693fae091f04ccac6b362e0405abf16a32230c" "8c1dd3d6fdfb2bee6b8f05d13d167f200befe1712d0abfdc47bb6d3b706c3434" "fede08d0f23fc0612a8354e0cf800c9ecae47ec8f32c5f29da841fe090dfc450" "87d46d0ad89557c616d04bef34afd191234992c4eb955ff3c60c6aa3afc2e5cc" "78c1c89192e172436dbf892bd90562bc89e2cc3811b5f9506226e735a953a9c6" "50d07ab55e2b5322b2a8b13bc15ddf76d7f5985268833762c500a90e2a09e7aa" "fee4e306d9070a55dce4d8e9d92d28bd9efe92625d2ba9d4d654fc9cd8113b7f" "4feee83c4fbbe8b827650d0f9af4ba7da903a5d117d849a3ccee88262805f40d" "16dd114a84d0aeccc5ad6fd64752a11ea2e841e3853234f19dc02a7b91f5d661" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "2074a98e21377af1c50897d4330caca2b719542bcdf9618ed3c1575c99b41363" "4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" default)))
+ '(fci-rule-color "#383838")
+ '(flycheck-color-mode-line-face-to-color (quote mode-line-buffer-id))
+ '(frame-background-mode (quote dark))
+ '(nrepl-message-colors
+   (quote
+    ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-selected-packages
    (quote
-    (org all-the-icons counsel jupyter simple-httpd zmq clang-format modern-cpp-font-lock counsel-etags company-rtags ivy-rtags rtags company-irony irony xterm-color yasnippet-snippets company-c-headers htmlize ripgrep poly-R olivetti dired+ ob crux dired uniquify zenburn-theme yaml-mode window-numbering which-key wgrep-ag use-package undo-tree solarized-theme smooth-scrolling smartparens rainbow-delimiters python-mode python powerline polymode paradox org-bullets nord-theme neotree multiple-cursors markdown-mode magit ledger-mode jedi ivy-historian inlineR imenu-anywhere iedit ibuffer-vc ibuffer-projectile hungry-delete helm-projectile gruvbox-theme goto-last-change fullframe expand-region eval-in-repl ess elpy electric-operator e2wm-R dumb-jump dired-subtree diminish dashboard counsel-projectile company-ycmd company-jedi color-theme-sanityinc-tomorrow anzu all-the-icons-ivy all-the-icons-dired aggressive-indent ag))))
+    (org all-the-icons counsel jupyter simple-httpd zmq clang-format modern-cpp-font-lock counsel-etags company-rtags ivy-rtags rtags company-irony irony xterm-color yasnippet-snippets company-c-headers htmlize ripgrep poly-R olivetti dired+ ob crux dired uniquify zenburn-theme yaml-mode window-numbering which-key wgrep-ag use-package undo-tree solarized-theme smooth-scrolling smartparens rainbow-delimiters python-mode python powerline polymode paradox org-bullets nord-theme neotree multiple-cursors markdown-mode magit ledger-mode jedi ivy-historian inlineR imenu-anywhere iedit ibuffer-vc ibuffer-projectile hungry-delete helm-projectile gruvbox-theme goto-last-change fullframe expand-region eval-in-repl ess elpy electric-operator e2wm-R dumb-jump dired-subtree diminish dashboard counsel-projectile company-ycmd company-jedi color-theme-sanityinc-tomorrow anzu all-the-icons-ivy all-the-icons-dired aggressive-indent ag)))
+ '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
+ '(vc-annotate-background "#2B2B2B")
+ '(vc-annotate-color-map
+   (quote
+    ((20 . "#BC8383")
+     (40 . "#CC9393")
+     (60 . "#DFAF8F")
+     (80 . "#D0BF8F")
+     (100 . "#E0CF9F")
+     (120 . "#F0DFAF")
+     (140 . "#5F7F5F")
+     (160 . "#7F9F7F")
+     (180 . "#8FB28F")
+     (200 . "#9FC59F")
+     (220 . "#AFD8AF")
+     (240 . "#BFEBBF")
+     (260 . "#93E0E3")
+     (280 . "#6CA0A3")
+     (300 . "#7CB8BB")
+     (320 . "#8CD0D3")
+     (340 . "#94BFF3")
+     (360 . "#DC8CC3"))))
+ '(vc-annotate-very-old-color "#DC8CC3")
+ '(window-divider-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
