@@ -1,5 +1,5 @@
 ;; init.el --- AnChu's Emacs configuration
-;; Updated on 2020-05-09
+;; Refactor on 08/11/2019
 
 ;; -----------------------------------------------------------------------------
 ;; Starting up
@@ -185,7 +185,8 @@
 ;; Emacs 26.1
 (setq confirm-kill-processes nil)
 
-(electric-pair-mode 1)
+
+(electric-pair-mode nil)
 (global-set-key (kbd "<f7>") 'ispell-word)
 (setq frame-title-format "%b")
 
@@ -314,10 +315,10 @@
 (use-package rainbow-delimiters)
 
 ;; https://github.com/nflath/hungry-delete
-(use-package hungry-delete
-  :diminish hungry-delete-mode
-  :config
-  (global-hungry-delete-mode))
+;; (use-package hungry-delete
+;;   :diminish hungry-delete-mode
+;;   :config
+;;   (global-hungry-delete-mode))
 
 ;; https://github.com/jrblevin/markdown-mode
 (use-package markdown-mode
@@ -577,28 +578,37 @@
   (powerline-center-theme)
   (setq powerline-arrow-shape 'arrow14))
 
+
 ;; https://github.com/Fuco1/smartparens
 (use-package smartparens
   :diminish smartparens-mode
   :config
   (add-hook 'ess-mode-hook #'smartparens-mode)
   (add-hook 'inferior-ess-mode-hook #'smartparens-mode)
+  (add-hook 'ess-mode-hook #'turn-on-smartparens-strict-mode)
 
   ;; keybinding management
 
   (define-key sp-keymap (kbd "C-M-k") 'sp-kill-sexp)
   (define-key sp-keymap (kbd "C-M-w") 'sp-copy-sexp)
 
+  (define-key sp-keymap (kbd "C-M-a") 'sp-beginning-of-sexp)
+  (define-key sp-keymap (kbd "C-M-e") 'sp-end-of-sexp)
+
+  (define-key sp-keymap (kbd "C-M-k") 'sp-kill-sexp)
+  (define-key sp-keymap (kbd "M-k") 'sp-backward-kill-sexp)
+  (define-key sp-keymap (kbd "C-M-w") 'sp-copy-sexp)
+
   (define-key sp-keymap (kbd "C-M-f") 'sp-forward-sexp)
   (define-key sp-keymap (kbd "C-M-b") 'sp-backward-sexp)
 
+  (define-key sp-keymap (kbd "C-M-n") 'sp-next-sexp)
+  (define-key sp-keymap (kbd "C-M-p") 'sp-previous-sexp)
+
   (define-key sp-keymap (kbd "C-S-f") 'sp-forward-symbol)
-  (define-key sp-keymap (kbd "C-S-b") 'sp-backward-symbol)
+  (define-key sp-keymap (kbd "C-S-b") 'sp-backward-symbol))
 
-  (define-key sp-keymap (kbd "C-c s s") 'sp-forward-slurp-sexp)
-  (define-key sp-keymap (kbd "C-c s b") 'sp-forward-barf-sexp)
 
-  (define-key sp-keymap (kbd "C-M-<backspace>") 'sp-splice-sexp-killing-backward))
 
 ;; -----------------------------------------------------------------------------
 ;; C
@@ -771,6 +781,7 @@ used as title."
               (delete-dups (push 'company-capf company-backends))
               (delete-dups (push 'company-files company-backends))))
   (add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
+  (show-paren-mode)
   (setq ess-eval-empty t)               ; don't skip non-code line
   (setq comint-scroll-to-bottom-on-input 'this)
   (setq comint-move-point-for-output 'others)
