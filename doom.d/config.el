@@ -124,7 +124,9 @@
               'eglot-ensure
               (make-local-variable 'company-backends)
               (delete-dups (push 'company-capf company-backends))
-              (delete-dups (push 'company-files company-backends))))
+              (delete-dups (push 'company-files company-backends))
+              (delete-dups (push 'company-R-objects company-backends))
+              (delete-dups (push 'company-R-args company-backends))))
   (add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
   (setq ess-eval-empty t)               ; don't skip non-code line
   (setq comint-scroll-to-bottom-on-input 'this)
@@ -139,7 +141,8 @@
   (setq ess-blink-region nil)
   (setq ess-r-flymake-lintr-cache nil)
   (setq inferior-R-args "--no-restore-history --no-save")
-  (setq ess-offset-arguments 'prev-line)
+  (setq ess-offset-arguments 'prev-call)
+  (setq ess-offset-block 'prev-call)
   (setq ess-assign-list '(" = "))
   (setq ess-eldoc-show-on-symbol nil)
   (setq ess-eldoc-abbreviation-style 'mild)
@@ -291,3 +294,13 @@
 ;; -----------------------------------------------------------------------------
 
 (map! "<f12>" #'magit-status)
+
+
+;; -----------------------------------------------------------------------------
+;; yasnippets
+;; -----------------------------------------------------------------------------
+
+(after! yasnippet
+  (add-hook! 'ess-mode-hook #'yas-minor-mode-on)
+  (map! :map ess-r-mode-map
+        "`" #'yas-expand-from-trigger-key))
