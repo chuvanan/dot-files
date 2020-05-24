@@ -97,6 +97,10 @@
 
 ;; Fill paragraph
 (map! "M-p" #'fill-paragraph)
+(map! :map markdown-mode-map
+      "M-p" #'fill-paragraph)
+
+(global-set-key (kbd "<f7>") 'ispell-word)
 
 ;; Undo
 (map! "C-z" #'undo-fu-only-undo)
@@ -106,6 +110,11 @@
 
 (setq org-return-follows-link t)
 (setq fill-column 80)
+
+(after! smartparens
+  (map! "C-M-w" #'sp-copy-sexp))
+
+(global-set-key [remap kill-ring-save] 'easy-kill)
 
 ;; -----------------------------------------------------------------------------
 ;; ESS
@@ -147,6 +156,7 @@
   (setq ess-eldoc-show-on-symbol nil)
   (setq ess-eldoc-abbreviation-style 'mild)
   (setq ess-use-eldoc nil)
+  (setq ess-indent-with-fancy-comments nil)
   (map! :map ess-r-mode-map
         "<C-return>" #'ess-eval-region-or-function-or-paragraph
         "<f5>" #'ess-display-help-on-object
@@ -157,6 +167,7 @@
         "C-c C-a n" #'anchu/insert-minor-section
         "C-c C-a m" #'anchu/insert-major-section
         "C-c C-a d" #'anchu/insert-named-comment
+        "C-'" #' run-ess-r
         "M--" #'ess-insert-assign)
   (setq ess-R-font-lock-keywords
       (quote

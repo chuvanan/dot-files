@@ -47,3 +47,4 @@
 ;(package! builtin-package :recipe (:branch "develop"))
 (package! window-numbering)
 (package! electric-operator)
+(package! easy-kill)
