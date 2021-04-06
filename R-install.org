@@ -14,15 +14,15 @@ sudo apt build-dep r-base
 - Download and extract source code
 
 #+BEGIN_SRC bash
-wget https://cran.r-project.org/src/base/R-4/R-4.0.0.tar.gz
-tar -xzvf R-4.0.0.tar.gz
-cd R-4.0.0
+wget https://cran.r-project.org/src/base/R-4/R-4.0.5.tar.gz
+tar -xzvf R-4.0.5.tar.gz
+cd R-4.0.5
 #+END_SRC
 
 - Configure and build R
 
 #+BEGIN_SRC bash
-./configure --prefix=/opt/R/4.0.0 --enable-R-shlib --with-blas --with-cairo --with-libtiff --enable-memory-profiling --without-recommended-packages --disable-java
+./configure --prefix=/opt/R/4.0.5 --enable-R-shlib --with-blas --with-cairo --with-libtiff --enable-memory-profiling --without-recommended-packages --disable-java
 make
 sudo make install
 #+END_SRC
@@ -30,8 +30,8 @@ sudo make install
 - Make R's executable files searchable by creating symbolic link in ~/bin~
 
 #+BEGIN_SRC bash
-sudo ln /opt/R/4.0.0/bin/R -s R
-sudo ln /opt/R/4.0.0/bin/Rscript -s Rscript
+sudo ln /opt/R/4.0.5/bin/R -s R
+sudo ln /opt/R/4.0.5/bin/Rscript -s Rscript
 #+END_SRC
 
 - Check
