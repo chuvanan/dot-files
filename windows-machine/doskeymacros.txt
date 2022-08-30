@@ -1,0 +1,44 @@
+pwd=cd
+cd=cd /D $*
+up=cd..
+ls=dir $*
+np=notepad++ $1
+cat=type $1
+mv=move $*
+grep=find /N $*
+ps=tasklist $*
+kill=taskkill $*
+cp=copy $*
+wc=find /c /v "" $1
+fe=start .
+rs=start rstudio $1
+ff=start firefox $1
+cr=start chrome $1
+ok=start outlook
+ex=start excel
+gg=git-gui
+ww=start winword
+jlab=jupyter lab
+sp=start "" "C:\Program Files (x86)\Spark\Spark.exe"
+pl=start "" "D:\Setup\plsql_developer_14\plsqldev.exe"
+mailto=start "" "mailto:"
+uk=start "" "C:\Program Files\UniKeyNT.exe"
+macros=doskey /macros
+hist=doskey /history
+date=date /t
+sn=start "" "C:\Windows\system32\SnippingTool.exe"
+configmacros=notepad++ "C:\Users\ancv\.config\doskeymacros.txt"
+we=start "" "C:\Program Files (x86)\Webex\Webex\Applications\ptoneclk.exe"
+teams="C:\Users\ancv\AppData\Local\Microsoft\Teams\Update.exe" --processStart "Teams.exe"
+tasks="C:\Windows\system32\taskschd.msc"
+
+rm=del $*
+reset=call %dosk%
+vpn=start "" "C:\Program Files (x86)\Cisco\Cisco AnyConnect Secure Mobility Client\vpnui.exe"
+
+
+pgrep=tasklist | findstr $1
+ramavail=systeminfo | find "Available Physical Memory"
+condadev=conda activate D:/Setup/conda-dev/envs
+condabase=conda activate base
+condaweb=conda activate D:/Setup/conda-web/envs
