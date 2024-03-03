@@ -8,7 +8,7 @@ This guide is intended for Unix and Unix-like system users.
 wget http://mirror.freedif.org/GNU/emacs/emacs-29.2.tar.gz
 #+END_SRC
 
-- Since version 28, Emacs has supported native compilation, so you need to install the necessary system requirements. And since version 29.1, Emacs alse supports tree-sitter.
+- Since version 28, Emacs has supported native compilation, so you need to install the necessary system requirements. And since version 29.1, Emacs also supports tree-sitter.
 
 #+BEGIN_SRC bash
 sudo apt-get install gcc-10 libgccjit0 libgccjit-10-dev
