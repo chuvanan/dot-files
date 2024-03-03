@@ -1,30 +1,39 @@
 #+TITLE: Install Emacs from source
 
-This guide is meant for users of Unix and Unix-like systems.
+This guide is intended for Unix and Unix-like system users.
 
-- First download the Emacs sources from this [[http://mirror.freedif.org/GNU/emacs/][repo]] or [[https://git.savannah.gnu.org/cgit/emacs.git][daily builds]]
+- To begin, download the Emacs sources from either this [[http://mirror.freedif.org/GNU/emacs/][mirror (recommended)]] or the [[https://git.savannah.gnu.org/cgit/emacs.git][daily builds]]. As of March 2024, the latest version is 29.2.
 
 #+BEGIN_SRC bash
-wget http://mirror.freedif.org/GNU/emacs/emacs-26.1.tar.gz
+wget http://mirror.freedif.org/GNU/emacs/emacs-29.2.tar.gz
+#+END_SRC
+
+- Since version 28, Emacs has supported native compilation, so you need to install the necessary system requirements. And since version 29.1, Emacs alse supports tree-sitter.
+
+#+BEGIN_SRC bash
+sudo apt-get install gcc-10 libgccjit0 libgccjit-10-dev
+sudo apt-get install libtree-sitter-dev
+export CC="gcc-10"
 #+END_SRC
 
 - Next uncompress and extract the source files
 
 #+BEGIN_SRC bash
-tar -zxvf emacs-26.1.tar.gz
-cd emacs-26.1
+tar -zxvf emacs-29.2.tar.gz
+cd emacs-29.2
 #+END_SRC
 
-- Then configure and compile sources
+- Then configure and compile sources.
 
 #+BEGIN_SRC bash
-./configure         # check and set up prerequisites
+./configure -with-tree-sitter --with-native-compilation          # check and set up prerequisites
 make                # build components
 sudo make install   # install files
 #+END_SRC
 
 *** References
 
+- https://www.masteringemacs.org/article/how-to-get-started-tree-sitter
 - https://www.gnu.org/software/emacs/manual/html_node/efaq/Installing-Emacs.html
 - https://www.emacswiki.org/emacs/BuildingEmacs
 - https://www.topbug.net/blog/2016/11/10/installing-emacs-from-source-avoid-the-conflict-of-ctags/
